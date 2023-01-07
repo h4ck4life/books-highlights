@@ -14,14 +14,15 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /* class to demonstarte use of Drive files list API */
 public class App {
@@ -44,7 +45,7 @@ public class App {
    * Global instance of the scopes required by this quickstart.
    * If modifying these scopes, delete your previously saved tokens/ folder.
    */
-  private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+  private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
   private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
   /**
@@ -86,7 +87,7 @@ public class App {
     FileList result = service.files().list()
       .setQ("'1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi' in parents")
       .setOrderBy("modifiedTime desc")
-      //.setPageSize(10)
+      .setPageSize(1)
       .setFields("nextPageToken, files(id, name)")
       .execute();
 
@@ -96,8 +97,39 @@ public class App {
     } else {
       System.out.println("Files:");
       for (File file : files) {
-        System.out.printf("%s (%s)\n", file.getName(), file.getId());
+        //System.out.printf("%s (%s)\n", file.getName(), file.getId());
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        service.files().export(file.getId(), "application/zip").executeMediaAndDownloadTo(outputStream);
+
+        ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+        ZipEntry zipEntry = zipInputStream.getNextEntry();
+        while (zipEntry != null) {
+          // if extension is .html
+          if (zipEntry.getName().endsWith(".html")) {
+            System.out.println(zipEntry.getName());
+            Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
+            System.out.println(doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > h1 > span").text());
+            System.out.println(doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > p:nth-child(2) > span").text());
+            System.out.println(doc.select("body > h1:nth-child(12) > span").text());
+            System.out.println("\n");
+            doc.select("body > table > tbody > tr > td > table > tbody > tr")
+              .forEach(element -> {
+                System.out.println(element.select("td:nth-child(2) > p:nth-child(1) > span").text());
+                System.out.println(element.select("td:nth-child(2) > p:nth-child(3) > span").text());
+                System.out.println(element.select("td:nth-child(3) > p > span > a").attr("href"));
+                System.out.println("\n");
+              });
+            break;
+          }
+          zipEntry = zipInputStream.getNextEntry();
+        }
+        zipInputStream.closeEntry();
+        zipInputStream.close();
+
+
       }
     }
   }
+
 }
