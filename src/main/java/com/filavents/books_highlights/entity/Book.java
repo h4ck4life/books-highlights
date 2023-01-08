@@ -2,6 +2,7 @@ package com.filavents.books_highlights.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -68,6 +69,9 @@ public class Book {
   }
 
   public List<Note> getNotes() {
+    if(notes == null) {
+      notes = new ArrayList<>();
+    }
     return notes;
   }
 

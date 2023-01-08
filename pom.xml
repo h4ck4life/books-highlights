@@ -126,7 +126,7 @@
     </dependency>
   </dependencies>
 
-  <build>
+ <!-- <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -178,7 +178,7 @@
         </configuration>
       </plugin>
     </plugins>
-  </build>
+  </build>-->
 
 
 </project>

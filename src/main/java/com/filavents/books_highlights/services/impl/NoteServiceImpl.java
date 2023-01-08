@@ -8,6 +8,8 @@ import com.filavents.books_highlights.utils.GoogleApi;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import jakarta.persistence.EntityManager;
@@ -18,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -49,26 +52,48 @@ public class NoteServiceImpl implements NoteService {
       return false;
 
     } else {
+
+      List<Future> futures = new ArrayList<>();
+
       for (File file : files) {
+        futures.add(Future.future(promise -> {
+          try {
+            logger.info("File name: " + file.getName());
 
-        logger.info("File name: " + file.getName());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        driveService.files().export(file.getId(), "application/zip").executeMediaAndDownloadTo(outputStream);
+            driveService.files().export(file.getId(), "application/zip").executeMediaAndDownloadTo(outputStream);
 
-        ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
-        ZipEntry zipEntry = zipInputStream.getNextEntry();
-        while (zipEntry != null) {
-          // if extension is .html
-          if (zipEntry.getName().endsWith(".html")) {
-            processContent(zipInputStream, file);
-            break;
+            ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+            while (zipEntry != null) {
+              if (zipEntry.getName().endsWith(".html")) {
+                processContent(zipInputStream, file);
+                break;
+              }
+              zipEntry = zipInputStream.getNextEntry();
+            }
+
+            zipInputStream.closeEntry();
+            zipInputStream.close();
+
+            promise.complete();
+
+          } catch (Exception e) {
+            promise.fail(e);
           }
-          zipEntry = zipInputStream.getNextEntry();
-        }
-        zipInputStream.closeEntry();
-        zipInputStream.close();
+        }));
       }
+
+      CompositeFuture.all(futures).onComplete(ar -> {
+        if (ar.succeeded()) {
+          logger.info("All files processed");
+        } else {
+          logger.error("Error processing files", ar.cause());
+        }
+      });
+
       return true;
     }
   }
@@ -101,7 +126,7 @@ public class NoteServiceImpl implements NoteService {
         note.setGoogleBookId(file.getId());
         note.setBook(book);
 
-        entityManager.persist(note);
+        book.getNotes().add(note);
 
       });
 

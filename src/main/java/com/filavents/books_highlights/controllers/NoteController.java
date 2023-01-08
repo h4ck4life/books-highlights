@@ -3,6 +3,7 @@ package com.filavents.books_highlights.controllers;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.services.impl.NoteServiceImpl;
 import io.vertx.core.Future;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -17,13 +18,20 @@ public class NoteController {
 
   }
 
-  public static Future<JsonObject> syncBooks(RoutingContext ctx) {
+  public static Future<Void> syncBooks(RoutingContext ctx) {
     return Future.future(promise -> {
-      boolean isSucceed = false;
       try {
-        isSucceed = noteService.syncBooks();
-        promise.complete(new JsonObject().put("isSucceed", isSucceed));
+        boolean result = noteService.syncBooks();
+        ctx.response()
+          .setStatusCode(200)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("isSucceed", result).encode()));
+        promise.complete();
       } catch (GeneralSecurityException | IOException e) {
+        ctx.response()
+          .setStatusCode(550)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("isSucceed", false).encode()));
         promise.fail(e);
       }
     });

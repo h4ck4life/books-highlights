@@ -2,22 +2,27 @@ package com.filavents.books_highlights;
 
 import com.filavents.books_highlights.configs.Database;
 import com.filavents.books_highlights.controllers.NoteController;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.StaticHandler;
 
-public class MainVerticle extends AbstractVerticle {
+import java.util.concurrent.TimeUnit;
+
+public class MainVerticle {
 
   static Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
-  @Override
-  public void start(Promise<Void> startPromise) {
+  public static void main(String[] args) {
+
+    // Init vertx
+    VertxOptions vertxOptions = new VertxOptions()
+      .setMaxWorkerExecuteTime(10)
+      .setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
+    var vertx = Vertx.vertx(vertxOptions);
 
     // Init the EMF
     Database.getEntityManagerFactory();
@@ -38,7 +43,7 @@ public class MainVerticle extends AbstractVerticle {
     });
 
     // Routers
-    router.get("/api/books/sync").respond(NoteController::syncBooks);
+    router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
 
     // setindexpage return index.html page
     //router.get("/").handler(ctx -> ctx.response().sendFile("web/reddit-ama-web/dist/reddit-ama-web/index.html"));
@@ -55,7 +60,7 @@ public class MainVerticle extends AbstractVerticle {
       if (httpServerAsyncResult.succeeded()) {
         logger.info("Server started on port: " + runningPort);
       } else {
-        startPromise.fail(httpServerAsyncResult.cause());
+        logger.error(httpServerAsyncResult.cause());
       }
     });
   }
