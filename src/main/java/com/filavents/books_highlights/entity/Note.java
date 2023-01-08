@@ -1,6 +1,7 @@
 package com.filavents.books_highlights.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "notes")
@@ -19,6 +20,9 @@ public class Note {
   @Column(name = "google_book_date", nullable = false)
   private String googleBookDate;
 
+  @Column(name = "google_book_url", nullable = false)
+  private String noteUrl;
+
   @ManyToOne
   @JoinColumn(name = "book_id")
   private Book book;
@@ -31,5 +35,43 @@ public class Note {
     this.id = id;
   }
 
+  public String getGetGoogleBookNote() {
+    return getGoogleBookNote;
+  }
 
+  public void setGetGoogleBookNote(String getGoogleBookNote) {
+    this.getGoogleBookNote = getGoogleBookNote;
+  }
+
+  public String getGoogleBookId() {
+    return googleBookId;
+  }
+
+  public void setGoogleBookId(String googleBookId) {
+    this.googleBookId = googleBookId;
+  }
+
+  public String getGoogleBookDate() {
+    return googleBookDate;
+  }
+
+  public void setGoogleBookDate(String googleBookDate) {
+    this.googleBookDate = googleBookDate;
+  }
+
+  public Book getBook() {
+    return book;
+  }
+
+  public void setBook(Book book) {
+    this.book = book;
+  }
+
+  public String getNoteUrl() {
+    return noteUrl;
+  }
+
+  public void setNoteUrl(String noteUrl) {
+    this.noteUrl = noteUrl;
+  }
 }

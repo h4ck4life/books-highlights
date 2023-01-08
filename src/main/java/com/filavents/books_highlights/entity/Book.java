@@ -34,4 +34,44 @@ public class Book {
   public void setId(Long id) {
     this.id = id;
   }
+
+  public String getGoogleBookId() {
+    return googleBookId;
+  }
+
+  public void setGoogleBookId(String googleBookId) {
+    this.googleBookId = googleBookId;
+  }
+
+  public String getGoogleBookTitle() {
+    return googleBookTitle;
+  }
+
+  public void setGoogleBookTitle(String googleBookTitle) {
+    this.googleBookTitle = googleBookTitle;
+  }
+
+  public String getGoogleBookAuthor() {
+    return googleBookAuthor;
+  }
+
+  public void setGoogleBookAuthor(String googleBookAuthor) {
+    this.googleBookAuthor = googleBookAuthor;
+  }
+
+  public String getGoogleBookNotesCount() {
+    return googleBookNotesCount;
+  }
+
+  public void setGoogleBookNotesCount(String googleBookNotesCount) {
+    this.googleBookNotesCount = googleBookNotesCount;
+  }
+
+  public List<Note> getNotes() {
+    return notes;
+  }
+
+  public void setNotes(List<Note> notes) {
+    this.notes = notes;
+  }
 }

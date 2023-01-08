@@ -38,7 +38,7 @@ public class MainVerticle extends AbstractVerticle {
     });
 
     // Routers
-    router.get("/api/sync").respond(NoteController::syncBooks);
+    router.get("/api/books/sync").respond(NoteController::syncBooks);
 
     // setindexpage return index.html page
     //router.get("/").handler(ctx -> ctx.response().sendFile("web/reddit-ama-web/dist/reddit-ama-web/index.html"));

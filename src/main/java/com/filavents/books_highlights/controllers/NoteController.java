@@ -3,9 +3,11 @@ package com.filavents.books_highlights.controllers;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.services.impl.NoteServiceImpl;
 import io.vertx.core.Future;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
-import java.util.Map;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class NoteController {
 
@@ -15,9 +17,15 @@ public class NoteController {
 
   }
 
-  public static Future<Map<String, Object>> syncBooks(RoutingContext ctx) {
+  public static Future<JsonObject> syncBooks(RoutingContext ctx) {
     return Future.future(promise -> {
-        noteService.getAllBooks();
+      boolean isSucceed = false;
+      try {
+        isSucceed = noteService.syncBooks();
+        promise.complete(new JsonObject().put("isSucceed", isSucceed));
+      } catch (GeneralSecurityException | IOException e) {
+        promise.fail(e);
+      }
     });
   }
 
