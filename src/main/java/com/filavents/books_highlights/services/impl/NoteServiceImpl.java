@@ -46,27 +46,22 @@ public class NoteServiceImpl implements NoteService {
     FileList result = GoogleApi.getFilesListByFolderId(driveService, "1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");
 
     List<File> files = result.getFiles();
-
     if (files == null || files.isEmpty()) {
       logger.info("No files found.");
       return false;
 
     } else {
-
       List<Future> futures = new ArrayList<>();
-
       for (File file : files) {
         futures.add(Future.future(promise -> {
           try {
             logger.info("File name: " + file.getName());
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
             driveService.files().export(file.getId(), "application/zip").executeMediaAndDownloadTo(outputStream);
 
             ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
             ZipEntry zipEntry = zipInputStream.getNextEntry();
-
             while (zipEntry != null) {
               if (zipEntry.getName().endsWith(".html")) {
                 processContent(zipInputStream, file);
@@ -74,7 +69,6 @@ public class NoteServiceImpl implements NoteService {
               }
               zipEntry = zipInputStream.getNextEntry();
             }
-
             zipInputStream.closeEntry();
             zipInputStream.close();
 
