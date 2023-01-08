@@ -1,0 +1,30 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+
+    <persistence-unit name="PERSISTENCE">
+        <description>Hibernate JPA Configuration</description>
+        <class>com.filavents.books_highlights.entity.Note</class>
+        <class>com.filavents.books_highlights.entity.Book</class>
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite:booknotes_full.sqlite"/>
+            <property name="hibernate.dialect" value="org.hibernate.community.dialect.SQLiteDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.connection.provider_class" value="com.zaxxer.hikari.hibernate.HikariConnectionProvider"/>
+            <property name="hibernate.hikari.minimumIdle" value="5"/>
+            <property name="hibernate.hikari.maximumPoolSize" value="200"/>
+            <property name="hibernate.hikari.idleTimeout" value="60000"/>
+            <property name="hibernate.hikari.connectionTimeout" value="60000"/>
+            <property name="hibernate.hikari.poolName" value="HikariCP"/>
+            <property name="hibernate.hikari.maxLifetime" value="1800000"/>
+            <property name="hibernate.hikari.connectionTestQuery" value="SELECT 1"/>
+            <property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>
