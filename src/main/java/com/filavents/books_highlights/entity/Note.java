@@ -77,4 +77,16 @@ public class Note {
   public void setNoteUrl(String noteUrl) {
     this.noteUrl = noteUrl;
   }
+
+  @Override
+  public String toString() {
+    return "Note{" +
+      "id=" + id +
+      ", getGoogleBookNote='" + getGoogleBookNote + '\'' +
+      ", googleBookId='" + googleBookId + '\'' +
+      ", googleBookDate=" + googleBookDate +
+      ", noteUrl='" + noteUrl + '\'' +
+      ", book=" + book +
+      '}';
+  }
 }

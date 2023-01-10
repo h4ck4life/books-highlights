@@ -1,7 +1,6 @@
 package com.filavents.books_highlights.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -171,7 +170,7 @@ public class Book {
       ", driveModifiedTime=" + driveModifiedTime +
       ", driveCreatedTime=" + driveCreatedTime +
       ", driveFileName='" + driveFileName + '\'' +
-      ", driveFileSize='" + driveFileSize + '\'' +
+      ", driveFileSize=" + driveFileSize +
       ", driveFileExtension='" + driveFileExtension + '\'' +
       ", driveWebViewLink='" + driveWebViewLink + '\'' +
       ", notes=" + notes +
