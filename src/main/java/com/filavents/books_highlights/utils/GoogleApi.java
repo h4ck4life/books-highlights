@@ -75,13 +75,14 @@ public class GoogleApi {
     return getDriveService().files().list()
       .setQ("'" + folderId + "' in parents")
       .setOrderBy("modifiedTime desc")
-      //.setPageSize(10)
-      .setFields("nextPageToken, files(id, name)")
+      //.setPageSize(2)
+      .setFields("nextPageToken, files(id, name, mimeType, modifiedTime, createdTime, name, size, fullFileExtension, webViewLink)")
       .execute();
   }
 
   /**
    * Download file from google drive as ZIP
+   *
    * @param fileId
    * @param outputStream
    * @throws IOException

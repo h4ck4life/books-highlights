@@ -44,6 +44,8 @@ public class MainVerticle {
 
     // Routers
     router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
+    router.get("/api/books").respond(NoteController::getBooks);
+    router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
 
     // setindexpage return index.html page
     //router.get("/").handler(ctx -> ctx.response().sendFile("web/reddit-ama-web/dist/reddit-ama-web/index.html"));

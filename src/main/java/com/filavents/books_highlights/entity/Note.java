@@ -1,7 +1,9 @@
 package com.filavents.books_highlights.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "notes")
@@ -17,14 +19,15 @@ public class Note {
   @Column(name = "google_book_id", nullable = false)
   private String googleBookId;
 
-  @Column(name = "google_book_date", nullable = false)
-  private String googleBookDate;
+  @Column(name = "google_book_date")
+  private LocalDate googleBookDate;
 
-  @Column(name = "google_book_url", nullable = false)
+  @Column(name = "google_book_url")
   private String noteUrl;
 
   @ManyToOne
   @JoinColumn(name = "book_id")
+  @JsonIgnore
   private Book book;
 
   public Long getId() {
@@ -51,11 +54,11 @@ public class Note {
     this.googleBookId = googleBookId;
   }
 
-  public String getGoogleBookDate() {
+  public LocalDate getGoogleBookDate() {
     return googleBookDate;
   }
 
-  public void setGoogleBookDate(String googleBookDate) {
+  public void setGoogleBookDate(LocalDate googleBookDate) {
     this.googleBookDate = googleBookDate;
   }
 

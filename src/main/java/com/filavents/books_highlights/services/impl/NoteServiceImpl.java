@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -30,12 +31,29 @@ public class NoteServiceImpl implements NoteService {
 
   @Override
   public List<Book> getAllBooks() {
-    return null;
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+    List<Book> books = entityManager.createQuery("SELECT b FROM Book b ORDER BY driveModifiedTime desc", Book.class)
+      .getResultList();
+    entityManager.close();
+    if (books == null) {
+      return Collections.emptyList();
+    } else {
+      return books;
+    }
   }
 
   @Override
-  public Book getBookById(Long id) {
-    return null;
+  public List<Note> getNotesByBookId(Long id) {
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+    List<Note> notes = entityManager.createQuery("SELECT n FROM Note n WHERE n.book.id = :id ORDER BY id ASC", Note.class)
+      .setParameter("id", id)
+      .getResultList();
+    entityManager.close();
+    if (notes == null) {
+      return Collections.emptyList();
+    } else {
+      return notes;
+    }
   }
 
   @Override
@@ -78,11 +96,12 @@ public class NoteServiceImpl implements NoteService {
         }));
       }
 
-      CompositeFuture.all(futures).onComplete(ar -> {
+      // Composite future partial success
+      CompositeFuture.any(futures).onComplete(ar -> {
         if (ar.succeeded()) {
           logger.info("All files processed");
         } else {
-          logger.error("Error processing files", ar.cause());
+          logger.error("Some files failed to process", ar.cause());
         }
       });
 
@@ -100,10 +119,17 @@ public class NoteServiceImpl implements NoteService {
     entityManager.getTransaction().begin();
 
     Book book = new Book();
-    book.setGoogleBookTitle(title);
-    book.setGoogleBookAuthor(author);
-    book.setGoogleBookNotesCount(notesCount);
-    book.setGoogleBookId(file.getId());
+    book.setBookTitle(title);
+    book.setBookAuthor(author);
+    book.setBookNotesCount(notesCount);
+    book.setDriveId(file.getId());
+    book.setDriveFileName(file.getName());
+    book.setDriveCreatedTime(file.getCreatedTime().getValue());
+    book.setDriveModifiedTime(file.getModifiedTime().getValue());
+    book.setDriveMimeType(file.getMimeType());
+    book.setDriveFileSize(file.getSize() != null ? file.getSize() : 0);
+    book.setDriveWebViewLink(file.getWebViewLink());
+    book.setDriveFileExtension(file.getFileExtension());
 
     doc.select("body > table > tbody > tr > td > table > tbody > tr")
       .forEach(element -> {
@@ -114,7 +140,6 @@ public class NoteServiceImpl implements NoteService {
         Note note = new Note();
         note.setGetGoogleBookNote(noteBody);
         note.setNoteUrl(noteUrl);
-        note.setGoogleBookDate(noteDate);
         note.setGoogleBookId(file.getId());
         note.setBook(book);
 
