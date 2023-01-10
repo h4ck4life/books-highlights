@@ -5,7 +5,6 @@ import com.filavents.books_highlights.entity.Book;
 import com.filavents.books_highlights.entity.Note;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.utils.GoogleApi;
-import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import io.vertx.core.CompositeFuture;
@@ -42,8 +41,7 @@ public class NoteServiceImpl implements NoteService {
   @Override
   public boolean syncBooks() throws GeneralSecurityException, IOException {
 
-    Drive driveService = GoogleApi.getDriveService();
-    FileList result = GoogleApi.getFilesListByFolderId(driveService, "1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");
+    FileList result = GoogleApi.getFilesListByFolderId("1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");
 
     List<File> files = result.getFiles();
     if (files == null || files.isEmpty()) {
@@ -58,7 +56,7 @@ public class NoteServiceImpl implements NoteService {
             logger.info("File name: " + file.getName());
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            driveService.files().export(file.getId(), "application/zip").executeMediaAndDownloadTo(outputStream);
+            GoogleApi.getFileById(file.getId(), outputStream);
 
             ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
             ZipEntry zipEntry = zipInputStream.getNextEntry();

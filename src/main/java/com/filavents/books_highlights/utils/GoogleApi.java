@@ -15,10 +15,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -53,11 +50,12 @@ public class GoogleApi {
 
   /**
    * Create an authorized Credential object.
+   *
    * @return
    * @throws GeneralSecurityException
    * @throws IOException
    */
-  public static Drive getDriveService() throws GeneralSecurityException, IOException {
+  private static Drive getDriveService() throws GeneralSecurityException, IOException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
       .setApplicationName(APPLICATION_NAME)
@@ -66,18 +64,30 @@ public class GoogleApi {
 
   /**
    * Get file list from google drive
+   *
    * @param driveService
    * @param folderId
    * @param pageSize
    * @return
    * @throws IOException
    */
-  public static FileList getFilesListByFolderId(Drive driveService, String folderId) throws IOException {
-    return driveService.files().list()
+  public static FileList getFilesListByFolderId(String folderId) throws IOException, GeneralSecurityException {
+    return getDriveService().files().list()
       .setQ("'" + folderId + "' in parents")
       .setOrderBy("modifiedTime desc")
       //.setPageSize(10)
       .setFields("nextPageToken, files(id, name)")
       .execute();
+  }
+
+  /**
+   * Download file from google drive as ZIP
+   * @param fileId
+   * @param outputStream
+   * @throws IOException
+   * @throws GeneralSecurityException
+   */
+  public static void getFileById(String fileId, ByteArrayOutputStream outputStream) throws IOException, GeneralSecurityException {
+    getDriveService().files().export(fileId, "application/zip").executeMediaAndDownloadTo(outputStream);
   }
 }
