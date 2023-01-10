@@ -23,8 +23,8 @@ public class NoteController {
 
   }
 
-  public static Future<Void> syncBooks(RoutingContext ctx) {
-    return Future.future(promise -> {
+  public static void syncBooks(RoutingContext ctx) {
+    Future.future(promise -> {
       try {
         boolean result = noteService.syncBooks();
         ctx.response()
