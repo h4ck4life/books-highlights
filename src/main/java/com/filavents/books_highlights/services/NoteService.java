@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface NoteService {
   boolean syncBooks() throws GeneralSecurityException, IOException;
+  boolean syncNotesByBookId(String bookId) throws GeneralSecurityException, IOException;
   List<Book> getAllBooks();
   List<Note> getNotesByBookId(Long id);
 

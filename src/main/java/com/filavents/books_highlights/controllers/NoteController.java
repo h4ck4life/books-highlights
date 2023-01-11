@@ -24,22 +24,33 @@ public class NoteController {
   }
 
   public static void syncBooks(RoutingContext ctx) {
-    Future.future(promise -> {
-      try {
-        boolean result = noteService.syncBooks();
-        ctx.response()
-          .setStatusCode(200)
-          .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
-        promise.complete();
-      } catch (GeneralSecurityException | IOException e) {
-        ctx.response()
-          .setStatusCode(550)
-          .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
-        promise.fail(e);
-      }
-    });
+    try {
+      boolean result = noteService.syncBooks();
+      ctx.response()
+        .setStatusCode(200)
+        .putHeader("content-type", "application/json")
+        .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+    } catch (GeneralSecurityException | IOException e) {
+      ctx.response()
+        .setStatusCode(550)
+        .putHeader("content-type", "application/json")
+        .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+    }
+  }
+
+  public static void syncNotesByBookId(RoutingContext ctx) {
+    try {
+      boolean result = noteService.syncNotesByBookId(ctx.pathParam("bookId"));
+      ctx.response()
+        .setStatusCode(200)
+        .putHeader("content-type", "application/json")
+        .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+    } catch (GeneralSecurityException | IOException e) {
+      ctx.response()
+        .setStatusCode(550)
+        .putHeader("content-type", "application/json")
+        .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+    }
   }
 
   public static Future<Map<String, Object>> getBooks(RoutingContext ctx) {

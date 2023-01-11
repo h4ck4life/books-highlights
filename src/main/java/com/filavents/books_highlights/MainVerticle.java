@@ -44,6 +44,7 @@ public class MainVerticle {
 
     // Routers
     router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
+    router.get("/api/books/:bookId/sync").blockingHandler(NoteController::syncNotesByBookId);
     router.get("/api/books").respond(NoteController::getBooks);
     router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
 

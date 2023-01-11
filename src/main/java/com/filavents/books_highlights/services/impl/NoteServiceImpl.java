@@ -57,6 +57,73 @@ public class NoteServiceImpl implements NoteService {
   }
 
   @Override
+  public boolean syncNotesByBookId(String bookId) throws GeneralSecurityException, IOException {
+
+    logger.info("Syncing notes for bookId: " + bookId);
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    GoogleApi.getFileById(bookId, outputStream);
+
+    Book book = getBookAndDeleteCurrentNotes(bookId);
+
+    ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+    ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+
+    while (zipEntry != null) {
+      if (zipEntry.getName().endsWith(".html")) {
+        Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
+        doc.select("body > table > tbody > tr > td > table > tbody > tr")
+          .forEach(element -> {
+            String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
+            String noteDate = element.select("td:nth-child(2) > p:nth-child(3) > span").text();
+            String noteUrl = element.select("td:nth-child(3) > p > span > a").attr("href");
+
+            Note note = new Note();
+            note.setGetGoogleBookNote(noteBody);
+            note.setNoteUrl(noteUrl);
+            note.setGoogleBookId(bookId);
+            note.setBook(book);
+
+            logger.info(noteBody);
+
+            entityManager.getTransaction().begin();
+            entityManager.persist(note);
+            entityManager.getTransaction().commit();
+          });
+        break;
+      }
+      zipEntry = zipInputStream.getNextEntry();
+    }
+    zipInputStream.closeEntry();
+    zipInputStream.close();
+
+    entityManager.close();
+
+    return true;
+  }
+
+  private static Book getBookAndDeleteCurrentNotes(String bookId) {
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+
+    // Get book by id
+    Book book = entityManager.createQuery("SELECT b FROM Book b WHERE b.driveId = :driveId", Book.class)
+      .setParameter("driveId", bookId)
+      .getSingleResult();
+
+    // Delete existing notes by driveId
+    entityManager.getTransaction().begin();
+    entityManager.createQuery("DELETE FROM Note n WHERE n.book.id = :id")
+      .setParameter("id", book.getId())
+      .executeUpdate();
+    entityManager.getTransaction().commit();
+    entityManager.close();
+
+    return book;
+  }
+
+  @Override
   public boolean syncBooks() throws GeneralSecurityException, IOException {
 
     FileList result = GoogleApi.getFilesListByFolderId("1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");
