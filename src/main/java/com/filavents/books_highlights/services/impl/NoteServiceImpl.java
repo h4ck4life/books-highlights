@@ -61,12 +61,12 @@ public class NoteServiceImpl implements NoteService {
 
     logger.info("Syncing notes for bookId: " + bookId);
 
-    // Get book by id
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    GoogleApi.getFileById(bookId, outputStream);
-
     // Delete current notes by book Id before updating with new notes from Gdrive
     Book book = getBookAndDeleteCurrentNotes(bookId);
+
+    // Get book by id
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    GoogleApi.getFileById(book.getDriveId(), outputStream);
 
     // Unzip file
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
@@ -112,8 +112,8 @@ public class NoteServiceImpl implements NoteService {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
 
     // Get book by id
-    Book book = entityManager.createQuery("SELECT b FROM Book b WHERE b.driveId = :driveId", Book.class)
-      .setParameter("driveId", bookId)
+    Book book = entityManager.createQuery("SELECT b FROM Book b WHERE b.id = :id", Book.class)
+      .setParameter("id", bookId)
       .getSingleResult();
 
     // Delete existing notes by driveId
