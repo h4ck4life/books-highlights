@@ -61,16 +61,20 @@ public class NoteServiceImpl implements NoteService {
 
     logger.info("Syncing notes for bookId: " + bookId);
 
+    // Get book by id
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     GoogleApi.getFileById(bookId, outputStream);
 
+    // Delete current notes by book Id before updating with new notes from Gdrive
     Book book = getBookAndDeleteCurrentNotes(bookId);
 
+    // Unzip file
     ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
     ZipEntry zipEntry = zipInputStream.getNextEntry();
 
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
 
+    // Iterate over all files in zip
     while (zipEntry != null) {
       if (zipEntry.getName().endsWith(".html")) {
         Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
@@ -126,8 +130,10 @@ public class NoteServiceImpl implements NoteService {
   @Override
   public boolean syncBooks() throws GeneralSecurityException, IOException {
 
+    // Get all books from Gdrive by folder Id
     FileList result = GoogleApi.getFilesListByFolderId("1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");
 
+    // iterate over all books
     List<File> files = result.getFiles();
     if (files == null || files.isEmpty()) {
       logger.info("No files found.");
@@ -135,16 +141,21 @@ public class NoteServiceImpl implements NoteService {
 
     } else {
       List<Future> futures = new ArrayList<>();
+
       for (File file : files) {
         futures.add(Future.future(promise -> {
           try {
             logger.info("File name: " + file.getName());
 
+            // Get book by id
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             GoogleApi.getFileById(file.getId(), outputStream);
 
+            // Unzip file
             ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
             ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+            // Iterate over all files in zip
             while (zipEntry != null) {
               if (zipEntry.getName().endsWith(".html")) {
                 processContent(zipInputStream, file);
@@ -154,7 +165,6 @@ public class NoteServiceImpl implements NoteService {
             }
             zipInputStream.closeEntry();
             zipInputStream.close();
-
             promise.complete();
 
           } catch (Exception e) {
@@ -178,6 +188,8 @@ public class NoteServiceImpl implements NoteService {
 
   private static void processContent(ZipInputStream zipInputStream, File file) throws IOException {
     Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
+
+    // Extract book info
     String title = doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > h1 > span").text();
     String author = doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > p:nth-child(2) > span").text();
     String notesCount = doc.select("body > h1:nth-child(12) > span").text();
@@ -198,6 +210,7 @@ public class NoteServiceImpl implements NoteService {
     book.setDriveWebViewLink(file.getWebViewLink());
     book.setDriveFileExtension(file.getFileExtension());
 
+    // Extract notes from book
     doc.select("body > table > tbody > tr > td > table > tbody > tr")
       .forEach(element -> {
         String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
