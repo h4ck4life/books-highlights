@@ -1,0 +1,7 @@
+<ol *ngFor="let book of books.data">
+  <li class="p-2">
+    <span>{{ book.bookTitle }}</span>
+    <span class="ml-2 text-cyan-600">{{ book.noteCount }} notes,</span>
+    <span class="ml-2 text-gray-400 text-sm">{{book.driveModifiedTime | date: 'MMMM d, y'}}</span>
+  </li>
+</ol>
