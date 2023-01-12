@@ -23,7 +23,7 @@ export class BooklistComponent {
     this.bookService.getBooks().subscribe(data => {
       this.books = data;
       this.hasLoaded = true;
-      this.hasData = this.books.data!.length > 0;
+      this.hasData = this.books.data!.length < 1;
     });
   }
 

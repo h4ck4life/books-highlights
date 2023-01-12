@@ -35,7 +35,7 @@ export class NotelistComponent {
     this.bookService.getBook(bookId).subscribe(data => {
       this.notes = data;
       this.hasLoaded = true;
-      this.hasData = this.notes.data!.length > 0;
+      this.hasData = this.notes.data!.length < 1;
     });
   }
 
