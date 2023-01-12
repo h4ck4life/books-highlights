@@ -12,6 +12,7 @@ export class BooklistComponent {
   constructor(private bookService: BookService) { }
 
   hasLoaded = false;
+  hasData = false;
 
   books: Books = {
     data: [],
@@ -22,6 +23,7 @@ export class BooklistComponent {
     this.bookService.getBooks().subscribe(data => {
       this.books = data;
       this.hasLoaded = true;
+      this.hasData = this.books.data!.length > 0;
     });
   }
 
