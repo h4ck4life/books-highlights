@@ -19,6 +19,7 @@ export class NotelistComponent {
     success: false
   };
 
+  hasLoaded = false;
   bookId: string = '1';
 
   ngOnInit(): void {
@@ -32,6 +33,7 @@ export class NotelistComponent {
   getNotesByBookId(bookId: string): void {
     this.bookService.getBook(bookId).subscribe(data => {
       this.notes = data;
+      this.hasLoaded = true;
     });
   }
 

@@ -11,6 +11,8 @@ export class BooklistComponent {
 
   constructor(private bookService: BookService) { }
 
+  hasLoaded = false;
+
   books: Books = {
     data: [],
     success: false
@@ -19,6 +21,7 @@ export class BooklistComponent {
   ngOnInit(): void {
     this.bookService.getBooks().subscribe(data => {
       this.books = data;
+      this.hasLoaded = true;
     });
   }
 

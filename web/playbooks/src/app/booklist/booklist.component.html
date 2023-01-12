@@ -1,11 +1,23 @@
-<div *ngFor="let book of books.data">
-  <div class="p-4">
-    <a [routerLink]="['/page/book', book.id]">
-      <span>{{ book.bookTitle }}</span>
-    </a>
-    <span class="ml-2 text-cyan-600">{{ book.noteCount }} notes,</span>
-    <span class="ml-2 text-gray-400 text-sm">{{
-      book.driveModifiedTime | date : "MMMM d, y"
-    }}</span>
+<div *ngIf="hasLoaded; else elseBlock">
+  <div *ngFor="let book of books.data">
+    <div class="p-4">
+      <a [routerLink]="['/page/book', book.id]">
+        <span>{{ book.bookTitle }}</span>
+      </a>
+      <span class="ml-2 text-cyan-600">{{ book.noteCount }} notes,</span>
+      <span class="ml-2 text-gray-400 text-sm">{{
+        book.driveModifiedTime | date : "MMMM d, y"
+      }}</span>
+    </div>
+  </div>
+</div>
+<ng-template #elseBlock>
+  <div class="p-4 text-center">
+    <span>Loading..</span>
+  </div>
+</ng-template>
+<div *ngIf="books.data!.length > 0">
+  <div class="p-4 text-center">
+    <span class="p-4 text-center">No results.</span>
   </div>
 </div>

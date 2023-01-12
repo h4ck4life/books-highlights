@@ -1,11 +1,23 @@
-<div *ngFor="let note of notes.data">
-  <div class="p-4">
-    <span>{{ note.getGoogleBookNote }}</span>
-    <a [href]="note.noteUrl" target="_blank">
-      <span class="ml-2 text-cyan-600">(view)</span>
-    </a>
-    <span class="ml-2 text-gray-400 text-sm">{{
-      note.googleBookDate | date : "MMMM d, y"
-    }}</span>
+<div *ngIf="hasLoaded; else elseBlock">
+  <div *ngFor="let note of notes.data">
+    <div class="p-4">
+      <span>{{ note.getGoogleBookNote }}</span>
+      <a [href]="note.noteUrl" target="_blank">
+        <span class="ml-2 text-cyan-600">(view)</span>
+      </a>
+      <span class="ml-2 text-gray-400 text-sm">{{
+        note.googleBookDate | date : "MMMM d, y"
+      }}</span>
+    </div>
+  </div>
+</div>
+<ng-template #elseBlock>
+  <div class="p-4 text-center">
+    <span>Loading..</span>
+  </div>
+</ng-template>
+<div *ngIf="notes.data!.length > 0">
+  <div class="p-4 text-center">
+    <span class="p-4 text-center">No results.</span>
   </div>
 </div>
