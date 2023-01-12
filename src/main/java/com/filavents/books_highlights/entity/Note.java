@@ -27,7 +27,6 @@ public class Note {
 
   @ManyToOne
   @JoinColumn(name = "book_id")
-  @JsonIgnore
   private Book book;
 
   public Long getId() {

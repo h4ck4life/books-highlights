@@ -24,7 +24,7 @@ export class AppComponent {
     this.isSyncing = true;
     this.bookService.syncBooks().subscribe(data => {
       this.isSyncing = false;
-      this.router.navigate(['/'], { skipLocationChange: true, replaceUrl: true }).then((result) => {
+      this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
         console.log(result);
       });
     });
