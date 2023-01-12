@@ -1,6 +1,6 @@
 <div *ngIf="hasLoaded; else elseBlock">
   <div *ngFor="let book of books.data">
-    <div class="p-4">
+    <div class="p-4 border-t-2 border-gray-300">
       <a [routerLink]="['/page/book', book.id]">
         <span>{{ book.bookTitle }}</span>
       </a>
