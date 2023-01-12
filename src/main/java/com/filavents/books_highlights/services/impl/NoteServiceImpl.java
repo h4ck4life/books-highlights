@@ -108,6 +108,15 @@ public class NoteServiceImpl implements NoteService {
     return true;
   }
 
+  private static void clearAllBooks() {
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+    entityManager.getTransaction().begin();
+    entityManager.createQuery("DELETE FROM Note").executeUpdate();
+    entityManager.createQuery("DELETE FROM Book").executeUpdate();
+    entityManager.getTransaction().commit();
+    entityManager.close();
+  }
+
   private static Book getBookAndDeleteCurrentNotes(String bookId) {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
 
@@ -129,6 +138,9 @@ public class NoteServiceImpl implements NoteService {
 
   @Override
   public boolean syncBooks() throws GeneralSecurityException, IOException {
+
+    logger.info("Syncing books..");
+    clearAllBooks();
 
     // Get all books from Gdrive by folder Id
     FileList result = GoogleApi.getFilesListByFolderId("1lK4_eUjkmJgXnyTMaN7MYECMWr7jceUi");

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { faBookBookmark } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
+import { faBookBookmark, faRotate } from '@fortawesome/free-solid-svg-icons';
+import { BookService } from './book.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +11,22 @@ import { faBookBookmark } from '@fortawesome/free-solid-svg-icons';
 export class AppComponent {
   title = 'Playbooks';
   faBookBookmark = faBookBookmark;
+  faRotate = faRotate;
+
+  isSyncing = false;
+
+  constructor(private bookService: BookService, private router: Router) { }
+
+  ngOnInit(): void {
+  }
+
+  syncBooks(): void {
+    this.isSyncing = true;
+    this.bookService.syncBooks().subscribe(data => {
+      this.isSyncing = false;
+      this.router.navigate(['/'], { skipLocationChange: true, replaceUrl: true }).then((result) => {
+        console.log(result);
+      });
+    });
+  }
 }

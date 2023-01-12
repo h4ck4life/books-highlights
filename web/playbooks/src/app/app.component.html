@@ -1,9 +1,22 @@
 <div id="main_container" class="p-2">
-  <div id="header" class="flex flex-col">
-    <a routerLink="/" routerLinkActive="active">
-      <fa-icon [icon]="faBookBookmark"></fa-icon>
-      <span class="text-xl font-bold ml-2">Home</span>
-    </a>
+  <div id="header" class="flex flex-row">
+    <div>
+      <a routerLink="/" routerLinkActive="active">
+        <fa-icon [icon]="faBookBookmark"></fa-icon>
+        <span class="text-xl font-bold ml-2">Home</span>
+      </a>
+    </div>
+    <div class="grow text-right">
+      <span *ngIf="isSyncing" class="text-gray-500 animate-pulse">Syncing..</span>
+      <fa-icon 
+      [icon]="faRotate" 
+      size="lg" 
+      class="cursor-pointer ml-3" 
+      (click)="syncBooks()"
+      [spin]="isSyncing"
+      style="--fa-animation-duration: 0.7s"
+      ></fa-icon>
+    </div>
   </div>
   <div id="middle_container" class="bg-zinc-200 rounded shadow-sm mt-4">
     <router-outlet></router-outlet>

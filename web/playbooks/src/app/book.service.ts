@@ -19,8 +19,16 @@ export class BookService {
     return this.http.get<Notes>(this.getHostname() + '/api/books/' + id);
   }
 
+  syncBooks(): Observable<Sync> {
+    return this.http.get<Sync>(this.getHostname() + '/api/books/sync');
+  }
+
   private getHostname(): string {
     return isDevMode() ? 'http://localhost:8080' : '';
   }
 
+}
+
+export interface Sync {
+  isSucceed?: boolean;
 }
