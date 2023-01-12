@@ -1,6 +1,8 @@
 package com.filavents.books_highlights.entity;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -50,6 +52,10 @@ public class Book {
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JsonIgnore
   private List<Note> notes;
+
+  public int getNoteCount() {
+    return notes.size();
+  }
 
   public Long getId() {
     return id;
