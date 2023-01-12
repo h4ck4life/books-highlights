@@ -15,7 +15,7 @@ export class BookService {
     return this.http.get<Books>(this.getHostname() + '/api/books');
   }
 
-  getBook(id: number): Observable<Notes> {
+  getBook(id: string): Observable<Notes> {
     return this.http.get<Notes>(this.getHostname() + '/api/books/' + id);
   }
 

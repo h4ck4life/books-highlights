@@ -1,0 +1,11 @@
+<div *ngFor="let note of notes.data">
+  <div class="p-4">
+    <span>{{ note.getGoogleBookNote }}</span>
+    <a [href]="note.noteUrl" target="_blank">
+      <span class="ml-2 text-cyan-600">(view)</span>
+    </a>
+    <span class="ml-2 text-gray-400 text-sm">{{
+      note.googleBookDate | date : "MMMM d, y"
+    }}</span>
+  </div>
+</div>
