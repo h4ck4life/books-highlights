@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { faRotate, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute, Router } from '@angular/router';
+import { faRotate, faMoon, faSun, faArrowDownWideShort } from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlay } from '@fortawesome/free-brands-svg-icons';
 import { BookService } from './book.service';
 
@@ -15,11 +15,16 @@ export class AppComponent {
   faGooglePlay = faGooglePlay;
   faMoon = faMoon;
   faSun = faSun;
+  faArrowDownWideShort = faArrowDownWideShort;
 
   isSyncing = false;
   isDarkMode = false;
 
-  constructor(private bookService: BookService, private router: Router) { }
+  constructor(
+    private bookService: BookService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) { }
 
   ngOnInit(): void {
     // save localstorage dark mode
@@ -47,6 +52,13 @@ export class AppComponent {
     } else {
       document.body.parentElement!.classList.remove('dark');
     }
+  }
 
+  toggleSort(): void {
+    if (this.router.url === '/') {
+      this.router.navigate(['/'], { replaceUrl: true, queryParams: { sortby: 'count' } });
+    } else {
+      this.router.navigate(['/'], { replaceUrl: true });
+    }
   }
 }
