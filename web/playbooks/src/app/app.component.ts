@@ -52,7 +52,10 @@ export class AppComponent {
         this.router.navigate(['/page/book/' + bookId], { replaceUrl: true }).then((result) => {
           console.log(result);
         });
+      }, error => {
+        this.isSyncing = false;
       });
+
     } else {
       console.log('syncing all books');
       this.isSyncing = true;
@@ -61,6 +64,8 @@ export class AppComponent {
         this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
           console.log(result);
         });
+      }, error => {
+        this.isSyncing = false;
       });
     }
   }
