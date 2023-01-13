@@ -34,14 +34,35 @@ export class AppComponent {
     }
   }
 
+  private getBookId(): string {
+    try {
+      return this.router.parseUrl(this.router.url).root.children['primary'].segments[2].path;
+    } catch (error) {
+      return '';
+    }
+  }
+
   syncBooks(): void {
-    this.isSyncing = true;
-    this.bookService.syncBooks().subscribe(data => {
-      this.isSyncing = false;
-      this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
-        console.log(result);
+    let bookId = this.getBookId();
+    if (bookId) {
+      console.log('syncing book: ' + bookId);
+      this.isSyncing = true;
+      this.bookService.syncBook(bookId).subscribe(data => {
+        this.isSyncing = false;
+        this.router.navigate(['/page/book/' + bookId], { replaceUrl: true }).then((result) => {
+          console.log(result);
+        });
       });
-    });
+    } else {
+      console.log('syncing all books');
+      this.isSyncing = true;
+      this.bookService.syncBooks().subscribe(data => {
+        this.isSyncing = false;
+        this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
+          console.log(result);
+        });
+      });
+    }
   }
 
   toggleDarkMode(): void {
