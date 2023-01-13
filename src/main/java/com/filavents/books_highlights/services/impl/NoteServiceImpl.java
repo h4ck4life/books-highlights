@@ -74,7 +74,10 @@ public class NoteServiceImpl implements NoteService {
 
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
     if (zipEntry != null) {
+      entityManager.getTransaction().begin();
       book.setDriveModifiedTime(zipEntry.getLastModifiedTime().toInstant().toEpochMilli());
+      entityManager.merge(book);
+      entityManager.getTransaction().commit();
     }
 
     // Iterate over all files in zip
