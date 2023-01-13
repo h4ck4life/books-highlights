@@ -13,7 +13,7 @@ export class BooklistComponent {
   constructor(
     private bookService: BookService,
     private route: ActivatedRoute,
-    ) { }
+  ) { }
 
   hasLoaded = false;
   hasData = false;
@@ -26,24 +26,29 @@ export class BooklistComponent {
 
   ngOnInit(): void {
 
-    // Get query params
-    this.route.queryParams.subscribe(params => {
-       this.sortBy = params['sortby'] === 'count' ? true : false;
-       if(this.sortBy) {
-         this.books.data!.sort((a, b) => {
-           return b.noteCount! - a.noteCount!;
-         });
-       } else {
-          this.books.data!.sort((a, b) => {
-            return b.driveModifiedTime! - a.driveModifiedTime!;
-          });
-       }
-    });
+    this.sortBooks();
 
     this.bookService.getBooks().subscribe(data => {
       this.books = data;
+      this.sortBooks();
       this.hasLoaded = true;
       this.hasData = this.books.data!.length < 1;
+    });
+  }
+
+  sortBooks(): void {
+    // Get query params
+    this.route.queryParams.subscribe(params => {
+      this.sortBy = params['sortby'] === 'count' ? true : false;
+      if (this.sortBy) {
+        this.books.data!.sort((a, b) => {
+          return b.noteCount! - a.noteCount!;
+        });
+      } else {
+        this.books.data!.sort((a, b) => {
+          return b.driveModifiedTime! - a.driveModifiedTime!;
+        });
+      }
     });
   }
 
