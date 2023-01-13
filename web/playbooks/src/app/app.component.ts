@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { faBookBookmark, faRotate } from '@fortawesome/free-solid-svg-icons';
+import { faRotate, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { faGooglePlay } from '@fortawesome/free-brands-svg-icons';
 import { BookService } from './book.service';
 
 @Component({
@@ -10,14 +11,22 @@ import { BookService } from './book.service';
 })
 export class AppComponent {
   title = 'PlayBooks Notes';
-  faBookBookmark = faBookBookmark;
   faRotate = faRotate;
+  faGooglePlay = faGooglePlay;
+  faMoon = faMoon;
+  faSun = faSun;
 
   isSyncing = false;
+  isDarkMode = false;
 
   constructor(private bookService: BookService, private router: Router) { }
 
   ngOnInit(): void {
+    // save localstorage dark mode
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (this.isDarkMode) {
+      document.body.parentElement!.classList.add('dark');
+    }
   }
 
   syncBooks(): void {
@@ -28,5 +37,16 @@ export class AppComponent {
         console.log(result);
       });
     });
+  }
+
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    if (this.isDarkMode) {
+      document.body.parentElement!.classList.add('dark');
+    } else {
+      document.body.parentElement!.classList.remove('dark');
+    }
+
   }
 }

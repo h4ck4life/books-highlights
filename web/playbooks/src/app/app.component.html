@@ -2,8 +2,8 @@
   <div id="header" class="flex flex-row">
     <div>
       <a routerLink="/" routerLinkActive="active">
-        <fa-icon [icon]="faBookBookmark"></fa-icon>
-        <span class="text-xl font-extrabold ml-2">PlayBook</span><span class="text-xl ml-1 text-gray-500">Notes</span>
+        <fa-icon [icon]="faGooglePlay" class="text-cyan-700 dark:text-cyan-500 text-xl"></fa-icon>
+        <span class="text-xl font-extrabold ml-2 text-cyan-700 dark:text-cyan-500">PlayBook</span><span class="text-xl ml-1 text-gray-500 dark:text-gray-400">Notes</span>
       </a>
     </div>
     <div class="grow text-right">
@@ -16,9 +16,10 @@
       [spin]="isSyncing"
       style="--fa-animation-duration: 0.7s"
       ></fa-icon>
+      <fa-icon [icon]="isDarkMode ? faSun : faMoon" class="ml-5 text-gray-500 text-xl cursor-pointer" (click)="toggleDarkMode()"></fa-icon>
     </div>
   </div>
-  <div id="middle_container" class="bg-zinc-200 rounded shadow-sm mt-4">
+  <div id="middle_container" class="bg-zinc-200 dark:bg-slate-900 rounded-lg shadow-sm mt-4">
     <router-outlet></router-outlet>
   </div>
 </div>
