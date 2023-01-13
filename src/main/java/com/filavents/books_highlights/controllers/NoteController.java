@@ -47,7 +47,7 @@ public class NoteController {
   }
 
   private static boolean verifyPin(RoutingContext ctx) {
-    String xPin = System.getenv("X-PIN");
+    String xPin = System.getenv("PIN");
     String pin = ctx.request().headers().get("x-pin");
     return pin != null && pin.equals(xPin);
   }
