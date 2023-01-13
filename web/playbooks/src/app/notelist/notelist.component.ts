@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { BookService } from '../book.service';
 import { Notes } from '../Notes';
 
@@ -12,7 +13,9 @@ export class NotelistComponent {
 
   constructor(
     private bookService: BookService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private titleService: Title
+    ) { }
 
   notes: Notes = {
     data: [],
@@ -36,6 +39,7 @@ export class NotelistComponent {
       this.notes = data;
       this.hasLoaded = true;
       this.hasData = this.notes.data!.length < 1;
+      this.titleService.setTitle(data.data![0].book!.bookTitle!);
     });
   }
 

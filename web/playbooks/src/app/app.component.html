@@ -3,7 +3,7 @@
     <div>
       <a routerLink="/" routerLinkActive="active">
         <fa-icon [icon]="faBookBookmark"></fa-icon>
-        <span class="text-xl font-bold ml-2">Home</span>
+        <span class="text-xl font-extrabold ml-2">PlayBook</span><span class="text-xl ml-1 text-gray-500">Notes</span>
       </a>
     </div>
     <div class="grow text-right">
@@ -11,7 +11,7 @@
       <fa-icon 
       [icon]="faRotate" 
       size="lg" 
-      class="cursor-pointer ml-3" 
+      class="cursor-pointer ml-3 text-gray-500" 
       (click)="syncBooks()"
       [spin]="isSyncing"
       style="--fa-animation-duration: 0.7s"
@@ -22,7 +22,7 @@
     <router-outlet></router-outlet>
   </div>
 </div>
-<div id="footer_container" class="mt-6">
+<div id="footer_container" class="mt-4 mb-2">
   <div class="text-center">
     <span class="text-sm text-gray-400">Made by @h4ck4life</span>
   </div>

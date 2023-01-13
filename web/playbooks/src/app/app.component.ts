@@ -9,7 +9,7 @@ import { BookService } from './book.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Playbooks';
+  title = 'PlayBooks Notes';
   faBookBookmark = faBookBookmark;
   faRotate = faRotate;
 
