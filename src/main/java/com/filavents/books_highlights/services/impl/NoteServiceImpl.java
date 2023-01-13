@@ -75,8 +75,10 @@ public class NoteServiceImpl implements NoteService {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
     if (zipEntry != null) {
       entityManager.getTransaction().begin();
-      book.setDriveModifiedTime(zipEntry.getLastModifiedTime().toInstant().toEpochMilli());
-      entityManager.merge(book);
+      entityManager.createQuery("UPDATE Book b set b.driveModifiedTime = :driveModifiedTime WHERE b.id = :id")
+        .setParameter("id", book.getId())
+        .setParameter("driveModifiedTime", zipEntry.getLastModifiedTime().toInstant().toEpochMilli())
+        .executeUpdate();
       entityManager.getTransaction().commit();
     }
 
