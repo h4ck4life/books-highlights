@@ -24,30 +24,52 @@ public class NoteController {
   }
 
   public static void syncBooks(RoutingContext ctx) {
-    try {
-      boolean result = noteService.syncBooks();
+    boolean isOk = verifyPin(ctx);
+    if (isOk) {
+      try {
+        boolean result = noteService.syncBooks();
+        ctx.response()
+          .setStatusCode(200)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+      } catch (GeneralSecurityException | IOException e) {
+        ctx.response()
+          .setStatusCode(550)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+      }
+    } else {
       ctx.response()
-        .setStatusCode(200)
-        .putHeader("content-type", "application/json")
-        .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
-    } catch (GeneralSecurityException | IOException e) {
-      ctx.response()
-        .setStatusCode(550)
+        .setStatusCode(401)
         .putHeader("content-type", "application/json")
         .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
     }
   }
 
+  private static boolean verifyPin(RoutingContext ctx) {
+    String xPin = System.getenv("X-PIN");
+    String pin = ctx.request().headers().get("x-pin");
+    return pin != null && pin.equals(xPin);
+  }
+
   public static void syncNotesByBookId(RoutingContext ctx) {
-    try {
-      boolean result = noteService.syncNotesByBookId(ctx.pathParam("bookId"));
+    boolean isOk = verifyPin(ctx);
+    if (isOk) {
+      try {
+        boolean result = noteService.syncNotesByBookId(ctx.pathParam("bookId"));
+        ctx.response()
+          .setStatusCode(200)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+      } catch (GeneralSecurityException | IOException e) {
+        ctx.response()
+          .setStatusCode(550)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+      }
+    } else {
       ctx.response()
-        .setStatusCode(200)
-        .putHeader("content-type", "application/json")
-        .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
-    } catch (GeneralSecurityException | IOException e) {
-      ctx.response()
-        .setStatusCode(550)
+        .setStatusCode(401)
         .putHeader("content-type", "application/json")
         .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
     }
