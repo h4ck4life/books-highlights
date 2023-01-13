@@ -42,30 +42,37 @@ export class AppComponent {
     }
   }
 
+  private getPin(): string {
+    let pin = prompt('Please enter pin to sync');
+    return pin ? pin : '';
+  }
+
   syncBooks(): void {
     let bookId = this.getBookId();
     if (bookId) {
       console.log('syncing book: ' + bookId);
       this.isSyncing = true;
-      this.bookService.syncBook(bookId).subscribe(data => {
+      this.bookService.syncBook(bookId, this.getPin()).subscribe(data => {
         this.isSyncing = false;
         this.router.navigate(['/page/book/' + bookId], { replaceUrl: true }).then((result) => {
           console.log(result);
         });
       }, error => {
         this.isSyncing = false;
+        alert('Sync failed' + error.message);
       });
 
     } else {
       console.log('syncing all books');
       this.isSyncing = true;
-      this.bookService.syncBooks().subscribe(data => {
+      this.bookService.syncBooks(this.getPin()).subscribe(data => {
         this.isSyncing = false;
         this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
           console.log(result);
         });
       }, error => {
         this.isSyncing = false;
+        alert('Sync failed' + error.message);
       });
     }
   }

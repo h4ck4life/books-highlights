@@ -19,12 +19,14 @@ export class BookService {
     return this.http.get<Notes>(this.getHostname() + '/api/books/' + id);
   }
 
-  syncBooks(): Observable<Sync> {
-    return this.http.get<Sync>(this.getHostname() + '/api/books/sync');
+  syncBooks(pin: string): Observable<Sync> {
+    const headers = { 'pin': pin };
+    return this.http.get<Sync>(this.getHostname() + '/api/books/sync', { headers });
   }
 
-  syncBook(id: string): Observable<Sync> {
-    return this.http.get<Sync>(this.getHostname() + '/api/books/' + id + '/sync');
+  syncBook(id: string, pin: string): Observable<Sync> {
+    const headers = { 'pin': pin };
+    return this.http.get<Sync>(this.getHostname() + '/api/books/' + id + '/sync', { headers });
   }
 
   private getHostname(): string {

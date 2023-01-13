@@ -9,6 +9,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
 import java.util.concurrent.TimeUnit;
@@ -36,12 +37,12 @@ public class MainVerticle {
     // Init Router
     Router router = Router.router(vertx);
 
-    // Middleware code
-    router.route().handler(ctx -> {
-      ctx.response().putHeader("x-powered-by", "vert.x");
-      ctx.response().putHeader("Access-Control-Allow-Origin", "*");
-      ctx.next();
-    });
+    // enable CORS
+    router.route().handler(
+      CorsHandler.create()
+        .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+        .allowedHeader("pin")
+    );
 
     // Routers
     router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
