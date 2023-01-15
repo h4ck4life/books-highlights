@@ -65,7 +65,12 @@ public class NoteController {
         ctx.response()
           .setStatusCode(550)
           .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+          .end(Buffer.buffer(
+            new JsonObject().put("success", false)
+              .put("message", e.getMessage())
+              .encode()
+            )
+          );
       }
     } else {
       ctx.response()
