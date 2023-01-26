@@ -44,36 +44,41 @@ export class AppComponent {
 
   private getPin(): string {
     let pin = prompt('Please enter pin to sync');
-    return pin ? pin : '';
+    return pin != null ? pin : '';
   }
 
   syncBooks(): void {
-    let bookId = this.getBookId();
-    if (bookId) {
-      console.log('syncing book: ' + bookId);
-      this.isSyncing = true;
-      this.bookService.syncBook(bookId, this.getPin()).subscribe(data => {
-        this.isSyncing = false;
-        this.router.navigate(['/page/book/' + bookId], { replaceUrl: true }).then((result) => {
-          console.log(result);
+    const pin = this.getPin();
+    if (pin != '') {
+      let bookId = this.getBookId();
+      if (bookId) {
+        console.log('syncing book: ' + bookId);
+        this.isSyncing = true;
+        this.bookService.syncBook(bookId, pin).subscribe(data => {
+          this.isSyncing = false;
+          if (data.success == false && data.redirect == true) {
+            location.assign(data.redirectUrl!);
+          } else {
+            this.router.navigate(['/page/book/' + bookId], { replaceUrl: true });
+          }
+        }, error => {
+          this.isSyncing = false;
+          alert(error.message);
         });
-      }, error => {
-        this.isSyncing = false;
-        alert('Sync failed' + error.message);
-      });
 
-    } else {
-      console.log('syncing all books');
-      this.isSyncing = true;
-      this.bookService.syncBooks(this.getPin()).subscribe(data => {
-        this.isSyncing = false;
-        this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
-          console.log(result);
+      } else {
+        console.log('syncing all books');
+        this.isSyncing = true;
+        this.bookService.syncBooks(pin).subscribe(data => {
+          this.isSyncing = false;
+          this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
+            console.log(result);
+          });
+        }, error => {
+          this.isSyncing = false;
+          alert(error.message);
         });
-      }, error => {
-        this.isSyncing = false;
-        alert('Sync failed' + error.message);
-      });
+      }
     }
   }
 

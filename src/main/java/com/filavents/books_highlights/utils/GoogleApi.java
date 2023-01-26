@@ -2,8 +2,7 @@ package com.filavents.books_highlights.utils;
 
 import com.filavents.books_highlights.App;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.auth.oauth2.TokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -14,6 +13,8 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
+import io.vertx.core.impl.logging.Logger;
+import io.vertx.core.impl.logging.LoggerFactory;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -28,9 +29,10 @@ public class GoogleApi {
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
   private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-  private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+  static Logger logger = LoggerFactory.getLogger(GoogleApi.class);
 
-
+  private static GoogleAuthorizationCodeFlow getGoogleAuthorizationFlow() throws IOException, GeneralSecurityException {
+    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
     if (in == null) {
       throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
@@ -38,14 +40,29 @@ public class GoogleApi {
     GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
     // Build flow and trigger user authorization request.
-    GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-      .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+    return new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+      .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
       .setAccessType("offline")
       .build();
-    LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+  }
 
-    //returns an authorized Credential object.
-    return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+  public static Credential getCredentials() throws IOException, GeneralSecurityException {
+    return getGoogleAuthorizationFlow().loadCredential(System.getenv("USER"));
+  }
+
+  public static boolean setCredentials(String code) {
+    try {
+      TokenRequest tokenRequest = getGoogleAuthorizationFlow().newTokenRequest(code).setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback");
+      Credential credential = getGoogleAuthorizationFlow().createAndStoreCredential(tokenRequest.execute(), System.getenv("USER"));
+      return credential != null;
+    } catch (GeneralSecurityException | IOException e) {
+      logger.error(e.getMessage());
+      return false;
+    }
+  }
+
+  public static String getAuthorizeUrl() throws IOException, GeneralSecurityException {
+    return getGoogleAuthorizationFlow().newAuthorizationUrl().setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback").build();
   }
 
   /**
@@ -57,7 +74,7 @@ public class GoogleApi {
    */
   private static Drive getDriveService() throws GeneralSecurityException, IOException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-    return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+    return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
       .setApplicationName(APPLICATION_NAME)
       .build();
   }

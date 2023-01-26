@@ -9,6 +9,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
@@ -41,14 +42,21 @@ public class MainVerticle {
     router.route().handler(
       CorsHandler.create()
         .allowedMethod(io.vertx.core.http.HttpMethod.GET)
-        .allowedHeader("pin")
+        .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+        .addOrigin("*")
+        //.allowedHeader("pin")
+        .allowCredentials(true)
     );
+
+    // Request body handler
+    router.route().handler(BodyHandler.create());
 
     // Routers
     router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
-    router.get("/api/books/:bookId/sync").blockingHandler(NoteController::syncNotesByBookId);
+    router.post("/api/books/:bookId/sync").blockingHandler(NoteController::syncNotesByBookId);
     router.get("/api/books").respond(NoteController::getBooks);
     router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
+    router.get("/api/oauth2callback").blockingHandler(NoteController::oauth2callback);
 
     // setindexpage return index.html page
     router.get("/").handler(ctx -> ctx.response().sendFile("web/playbooks/dist/playbooks/index.html"));

@@ -20,13 +20,13 @@ export class BookService {
   }
 
   syncBooks(pin: string): Observable<Sync> {
-    const headers = { 'pin': pin };
-    return this.http.get<Sync>(this.getHostname() + '/api/books/sync', { headers });
+    const body = { 'pin': pin };
+    return this.http.post<Sync>(this.getHostname() + '/api/books/sync', body);
   }
 
   syncBook(id: string, pin: string): Observable<Sync> {
-    const headers = { 'pin': pin };
-    return this.http.get<Sync>(this.getHostname() + '/api/books/' + id + '/sync', { headers });
+    const body = { 'pin': pin };
+    return this.http.post<Sync>(this.getHostname() + '/api/books/' + id + '/sync', body);
   }
 
   private getHostname(): string {
@@ -36,5 +36,7 @@ export class BookService {
 }
 
 export interface Sync {
-  isSucceed?: boolean;
+  success?: boolean;
+  redirect?: boolean;
+  redirectUrl?: string;
 }
