@@ -71,9 +71,11 @@ export class AppComponent {
         this.isSyncing = true;
         this.bookService.syncBooks(pin).subscribe(data => {
           this.isSyncing = false;
-          this.router.navigate(['/'], { replaceUrl: true }).then((result) => {
-            console.log(result);
-          });
+          if (data.success == false && data.redirect == true) {
+            location.assign(data.redirectUrl!);
+          } else {
+            this.router.navigate(['/'], { replaceUrl: true });
+          }
         }, error => {
           this.isSyncing = false;
           alert(error.message);

@@ -12,6 +12,9 @@ import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -21,6 +24,7 @@ import java.util.Map;
 public class NoteController {
 
   private static final NoteService noteService = new NoteServiceImpl();
+  static OkHttpClient client = new OkHttpClient();
 
   private NoteController() {
 
@@ -29,7 +33,8 @@ public class NoteController {
   static Logger logger = LoggerFactory.getLogger(NoteController.class);
 
   public static void syncBooks(RoutingContext ctx) {
-    boolean isOk = verifyPin(ctx);
+    //boolean isOk = verifyPin(ctx);
+    boolean isOk = verifyPinViaGoogleAuthenticator(ctx);
     if (isOk) {
       try {
         if (GoogleApi.getCredentials() != null) {
@@ -66,6 +71,20 @@ public class NoteController {
     }
   }
 
+  private static boolean verifyPinViaGoogleAuthenticator(RoutingContext ctx) {
+    String pin = ctx.body().asJsonObject().getString("pin");
+    Request request = new Request.Builder()
+      .url("https://www.authenticatorapi.com/Validate.aspx?Pin=" + pin + "&SecretCode=" + System.getenv("SECRETCODE"))
+      .build();
+
+    try (Response response = client.newCall(request).execute()) {
+      return response.body().string().contains("True");
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+      throw new RuntimeException(e);
+    }
+  }
+
   private static boolean verifyPin(RoutingContext ctx) {
     String xPin = System.getenv("PIN");
     String pin = ctx.body().asJsonObject().getString("pin");
@@ -73,7 +92,9 @@ public class NoteController {
   }
 
   public static void syncNotesByBookId(RoutingContext ctx) {
-    boolean isOk = verifyPin(ctx);
+    //boolean isOk = verifyPin(ctx);
+    boolean isOk = verifyPinViaGoogleAuthenticator(ctx);
+    System.out.println("isOk: " + isOk);
     if (isOk) {
       try {
         if (GoogleApi.getCredentials() != null) {
