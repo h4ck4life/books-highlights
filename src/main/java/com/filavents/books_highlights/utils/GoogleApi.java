@@ -47,7 +47,11 @@ public class GoogleApi {
   }
 
   public static Credential getCredentials() throws IOException, GeneralSecurityException {
-    return getGoogleAuthorizationFlow().loadCredential(System.getenv("USER"));
+    Credential credential = getGoogleAuthorizationFlow().loadCredential(System.getenv("USER"));
+    if (credential != null) {
+      getGoogleAuthorizationFlow().loadCredential(System.getenv("USER")).refreshToken();
+    }
+    return credential;
   }
 
   public static boolean setCredentials(String code) {
