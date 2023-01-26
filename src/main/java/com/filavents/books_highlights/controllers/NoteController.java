@@ -32,11 +32,26 @@ public class NoteController {
     boolean isOk = verifyPin(ctx);
     if (isOk) {
       try {
-        boolean result = noteService.syncBooks();
-        ctx.response()
-          .setStatusCode(200)
-          .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+        if (GoogleApi.getCredentials() != null) {
+          boolean result = noteService.syncBooks();
+          ctx.response()
+            .setStatusCode(200)
+            .putHeader("content-type", "application/json")
+            .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+        } else {
+          ctx.response()
+            .setStatusCode(200)
+            .putHeader("content-type", "application/json")
+            .end(
+              Buffer.buffer(
+                new JsonObject()
+                  .put("success", false)
+                  .put("redirect", true)
+                  .put("redirectUrl", GoogleApi.getAuthorizeUrl())
+                  .encode()
+              )
+            );
+        }
       } catch (GeneralSecurityException | IOException e) {
         ctx.response()
           .setStatusCode(550)

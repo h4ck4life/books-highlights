@@ -52,7 +52,7 @@ public class MainVerticle {
     router.route().handler(BodyHandler.create());
 
     // Routers
-    router.get("/api/books/sync").blockingHandler(NoteController::syncBooks);
+    router.post("/api/books/sync").blockingHandler(NoteController::syncBooks);
     router.post("/api/books/:bookId/sync").blockingHandler(NoteController::syncNotesByBookId);
     router.get("/api/books").respond(NoteController::getBooks);
     router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
