@@ -187,3 +187,4 @@ nbdist/
 /tokens/
 /src/main/resources/credentials.json
 /booknotes_full.sqlite
+/index/
