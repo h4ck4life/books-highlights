@@ -33,7 +33,6 @@ public class NoteController {
   static Logger logger = LoggerFactory.getLogger(NoteController.class);
 
   public static void syncBooks(RoutingContext ctx) {
-    //boolean isOk = verifyPin(ctx);
     boolean isOk = verifyPinViaGoogleAuthenticator(ctx);
     if (isOk) {
       try {
@@ -92,7 +91,6 @@ public class NoteController {
   }
 
   public static void syncNotesByBookId(RoutingContext ctx) {
-    //boolean isOk = verifyPin(ctx);
     boolean isOk = verifyPinViaGoogleAuthenticator(ctx);
     System.out.println("isOk: " + isOk);
     if (isOk) {

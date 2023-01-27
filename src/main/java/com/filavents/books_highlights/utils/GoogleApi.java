@@ -48,8 +48,8 @@ public class GoogleApi {
 
   public static Credential getCredentials() throws IOException, GeneralSecurityException {
     Credential credential = getGoogleAuthorizationFlow().loadCredential(System.getenv("USER"));
-    if (credential != null) {
-      getGoogleAuthorizationFlow().loadCredential(System.getenv("USER")).refreshToken();
+    if (credential != null && (credential.getExpiresInSeconds() != null && credential.getExpiresInSeconds() < 60)) {
+      return null;
     }
     return credential;
   }

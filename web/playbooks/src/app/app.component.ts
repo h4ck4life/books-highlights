@@ -59,7 +59,8 @@ export class AppComponent {
           if (data.success == false && data.redirect == true) {
             location.assign(data.redirectUrl!);
           } else {
-            this.router.navigate(['/page/book/' + bookId], { replaceUrl: true });
+            location.reload();
+            //this.router.navigate(['/page/book/' + bookId], { replaceUrl: true });
           }
         }, error => {
           this.isSyncing = false;
@@ -74,7 +75,8 @@ export class AppComponent {
           if (data.success == false && data.redirect == true) {
             location.assign(data.redirectUrl!);
           } else {
-            this.router.navigate(['/'], { replaceUrl: true });
+            location.assign('/');
+            //this.router.navigate(['/'], { replaceUrl: true });
           }
         }, error => {
           this.isSyncing = false;
