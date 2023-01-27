@@ -35,7 +35,7 @@ public class NotesIndexer {
 
   static Logger logger = LoggerFactory.getLogger(NotesIndexer.class);
 
-  private NotesIndexer() throws IOException {
+  private NotesIndexer() {
   }
 
   static {
