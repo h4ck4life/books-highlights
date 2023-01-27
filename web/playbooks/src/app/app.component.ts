@@ -43,7 +43,7 @@ export class AppComponent {
   }
 
   private getPin(): string {
-    let pin = prompt('Please enter pin to sync');
+    let pin = prompt('Sync PIN:');
     return pin != null ? pin : '';
   }
 
