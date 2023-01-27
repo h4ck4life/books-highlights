@@ -31,6 +31,9 @@ public class GoogleApi {
 
   static Logger logger = LoggerFactory.getLogger(GoogleApi.class);
 
+  private GoogleApi() {
+  }
+
   private static GoogleAuthorizationCodeFlow getGoogleAuthorizationFlow() throws IOException, GeneralSecurityException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
     InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);

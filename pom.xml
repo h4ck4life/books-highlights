@@ -129,6 +129,16 @@
       <artifactId>okhttp</artifactId>
       <version>4.10.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>9.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queryparser</artifactId>
+      <version>9.4.2</version>
+    </dependency>
   </dependencies>
 
 </project>
