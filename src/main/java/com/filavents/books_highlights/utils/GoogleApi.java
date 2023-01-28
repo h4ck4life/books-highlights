@@ -1,6 +1,5 @@
 package com.filavents.books_highlights.utils;
 
-import com.filavents.books_highlights.App;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -36,7 +35,7 @@ public class GoogleApi {
 
   private static GoogleAuthorizationCodeFlow getGoogleAuthorizationFlow() throws IOException, GeneralSecurityException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-    InputStream in = App.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+    InputStream in = GoogleApi.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
     if (in == null) {
       throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
     }

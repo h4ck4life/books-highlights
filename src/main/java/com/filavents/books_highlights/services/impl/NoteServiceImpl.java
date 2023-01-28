@@ -263,7 +263,6 @@ public class NoteServiceImpl implements NoteService {
         note.setBook(book);
 
         book.getNotes().add(note);
-
       });
 
     entityManager.persist(book);
