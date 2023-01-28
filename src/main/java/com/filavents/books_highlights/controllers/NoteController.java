@@ -6,6 +6,7 @@ import com.filavents.books_highlights.entity.Note;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.services.impl.NoteServiceImpl;
 import com.filavents.books_highlights.utils.GoogleApi;
+import com.filavents.books_highlights.utils.NotesIndexer;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.logging.Logger;
@@ -15,6 +16,7 @@ import io.vertx.ext.web.RoutingContext;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -143,6 +145,21 @@ public class NoteController {
       .putHeader("Location", "/")
       .end();
 
+  }
+
+  public static Future<Map<String, Object>> searchNotes(RoutingContext ctx) {
+    return Future.future(promise -> {
+      String query = ctx.pathParam("query");
+      JsonResponse searchResults = null;
+      try {
+        searchResults = NotesIndexer.search(query);
+      } catch (ParseException e) {
+        throw new RuntimeException(e);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      promise.complete(searchResults.asMap());
+    });
   }
 
   public static Future<Map<String, Object>> getBooks(RoutingContext ctx) {

@@ -56,6 +56,7 @@ public class MainVerticle {
     router.post("/api/books/:bookId/sync").blockingHandler(NoteController::syncNotesByBookId);
     router.get("/api/books").respond(NoteController::getBooks);
     router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
+    router.get("/api/notes/search/:query").respond(NoteController::searchNotes);
     router.get("/api/oauth2callback").blockingHandler(NoteController::oauth2callback);
 
     // setindexpage return index.html page

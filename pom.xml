@@ -139,6 +139,11 @@
       <artifactId>lucene-queryparser</artifactId>
       <version>9.4.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-grouping</artifactId>
+      <version>9.4.2</version>
+    </dependency>
   </dependencies>
 
 </project>

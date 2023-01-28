@@ -5,6 +5,7 @@ import com.filavents.books_highlights.entity.Book;
 import com.filavents.books_highlights.entity.Note;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.utils.GoogleApi;
+import com.filavents.books_highlights.utils.NotesIndexer;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import io.vertx.core.CompositeFuture;
@@ -113,10 +114,12 @@ public class NoteServiceImpl implements NoteService {
 
     entityManager.close();
 
+    startNotesIndexing();
+
     return true;
   }
 
-  private static void clearAllBooks() {
+  private void clearAllBooks() {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
     entityManager.getTransaction().begin();
     entityManager.createQuery("DELETE FROM Note").executeUpdate();
@@ -125,7 +128,7 @@ public class NoteServiceImpl implements NoteService {
     entityManager.close();
   }
 
-  private static Book getBookAndDeleteCurrentNotes(String bookId) {
+  private Book getBookAndDeleteCurrentNotes(String bookId) {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
 
     // Get book by id
@@ -202,11 +205,27 @@ public class NoteServiceImpl implements NoteService {
         }
       });
 
+      startNotesIndexing();
+
       return true;
     }
   }
 
-  private static void processContent(ZipInputStream zipInputStream, File file) throws IOException {
+  private void startNotesIndexing() {
+    // Init note indexing
+    try {
+      boolean isCompleted = NotesIndexer.initIndex();
+      if (isCompleted) {
+        logger.info("Indexing completed");
+      } else {
+        logger.error("Indexing failed");
+      }
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+    }
+  }
+
+  private void processContent(ZipInputStream zipInputStream, File file) throws IOException {
     Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
 
     // Extract book info
