@@ -117,4 +117,11 @@ export class AppComponent {
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
+
+  search(): void {
+    let query = prompt('Search:');
+    if (query != null) {
+      this.router.navigate(['/page/note/search/' + query]);
+    }
+  }
 }

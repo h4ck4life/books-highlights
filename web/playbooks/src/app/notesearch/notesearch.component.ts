@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BookService } from '../book.service';
 import { Search } from '../Search';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-notesearch',
@@ -18,6 +19,8 @@ export class NotesearchComponent {
   hasLoaded = false;
   hasData = false;
 
+  faCircleNotch = faCircleNotch;
+
   query: string = '';
   searchResults: Search = {
     data: [],
@@ -33,7 +36,6 @@ export class NotesearchComponent {
 
   private searchNotes(query: string): void {
     this.bookService.searchNotes(query).subscribe(data => {
-      console.log(data);
       this.searchResults = data;
       this.hasLoaded = true;
       this.hasData = this.searchResults.data!.length < 1;

@@ -1,1 +1,40 @@
-<p>notesearch works!</p>
+<div *ngIf="hasLoaded; else elseBlock">
+  <div *ngFor="let note of searchResults.data">
+    <div class="p-4 border-t-2 border-gray-200 dark:border-slate-800">
+      <div class="flex flex-row">
+        <div class="border-r-2 border-cyan-600"></div>
+        <div class="pl-2">
+          <span>{{ note.noteText }}</span>
+        </div>
+      </div>
+      <div class="flex flex-row mt-6 dark:text-gray-500 text-gray-400">
+        <div class="flex-grow">
+          <span class="text-xs block">{{ note.bookTitle }}</span>
+        </div>
+        <div class="flex-grow text-right">
+          <a
+            [routerLink]="['/page/book/' + note.bookId]"
+            [fragment]="note.noteId"
+          >
+            <span class="text-xs cursor-pointer">#{{ note.noteId }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #elseBlock>
+  <div class="p-4 text-center">
+    <fa-icon
+      [icon]="faCircleNotch"
+      [spin]="true"
+      style="--fa-animation-duration: 0.7s"
+      class="text-gray-400 fa-2x"
+    ></fa-icon>
+  </div>
+</ng-template>
+<div *ngIf="hasData">
+  <div class="p-4 text-center">
+    <span class="p-4 text-center">No results.</span>
+  </div>
+</div>

@@ -4,54 +4,29 @@
       <a routerLink="/" routerLinkActive="active">
         <fa-icon
           [icon]="faGooglePlay"
-          class="text-cyan-700 dark:text-cyan-500 text-xl"
+          class="text-cyan-600 dark:text-cyan-500 text-2xl"
         ></fa-icon>
         <span
-          class="text-xl font-extrabold ml-2 text-cyan-700 dark:text-cyan-500"
+          class="text-2xl font-extrabold ml-2 text-cyan-600 dark:text-cyan-500"
           >PlayBook</span
-        ><span class="text-xl ml-1 text-gray-500 dark:text-gray-400"
+        ><span class="text-2xl ml-1 text-gray-500 dark:text-gray-400"
           >Notes</span
         >
       </a>
     </div>
     <div class="flex grow flex-row-reverse">
-      <!-- <span
-        *ngIf="isSyncing"
-        class="text-gray-500 animate-pulse hidden sm:inline"
-        >Syncing..</span
-      >
-      <fa-icon
-        [icon]="faRotate"
-        size="lg"
-        class="cursor-pointer ml-3 text-gray-500"
-        (click)="syncBooks()"
-        [spin]="isSyncing"
-        style="--fa-animation-duration: 0.7s"
-      ></fa-icon>
-      <fa-icon
-        [icon]="isDarkMode ? faSun : faMoon"
-        class="ml-5 text-gray-500 text-xl cursor-pointer"
-        (click)="toggleDarkMode()"
-      >
-      </fa-icon>
-      <fa-icon
-        [icon]="faArrowDownWideShort"
-        class="ml-5 text-gray-500 text-xl cursor-pointer"
-        (click)="toggleSort()"
-      >
-      </fa-icon> -->
       <div class="relative group w-fit">
         <fa-icon
           [icon]="faBars"
-          class="ml-3 text-gray-500 text-xl cursor-pointer"
+          class="ml-5 text-gray-500 text-2xl cursor-pointer"
           (click)="toggleMenu()"
         >
         </fa-icon>
-        <div class="absolute w-fit z-10 hidden bg-gray-100 group-hover:block rounded -inset-x-14">
+        <div class="absolute w-fit z-10 hidden bg-gray-100 group-hover:block rounded -inset-x-16">
           <div class="w-fit shadow-md">
             <div 
             (click)="toggleSort()"
-            class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
+            class="flex flex-row cursor-pointer px-6 py-3 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
               <fa-icon
                 [icon]="faArrowDownWideShort"
                 class="text-gray-500 text-xl"
@@ -61,7 +36,7 @@
             </div>
             <div
               (click)="toggleDarkMode()"
-              class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900"
+              class="flex flex-row cursor-pointer px-6 py-3 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900"
             >
               <fa-icon
                 [icon]="isDarkMode ? faSun : faMoon"
@@ -72,11 +47,10 @@
             </div>
             <div 
             (click)="syncBooks()" 
-            class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
+            class="flex flex-row cursor-pointer px-6 py-3 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
               <fa-icon
                 [icon]="faRotate"
-                size="lg"
-                class="text-gray-500"
+                class="text-gray-500 text-xl"
                 [spin]="isSyncing"
                 style="--fa-animation-duration: 0.7s"
               ></fa-icon>
@@ -88,7 +62,7 @@
       <fa-icon
         [icon]="faSearch"
         class="ml-5 text-gray-500 text-xl cursor-pointer"
-        (click)="toggleMenu()"
+        (click)="search()"
       >
       </fa-icon>
     </div>
