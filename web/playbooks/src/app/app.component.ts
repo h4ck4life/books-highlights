@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { 
-  faRotate, 
-  faMoon, 
-  faSun, 
-  faArrowDownWideShort, 
+import {
+  faRotate,
+  faMoon,
+  faSun,
+  faArrowDownWideShort,
   faBars,
-  faSearch, 
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlay } from '@fortawesome/free-brands-svg-icons';
 import { BookService } from './book.service';
@@ -115,12 +115,8 @@ export class AppComponent {
   }
 
   toggleMenu(): void {
-    // if has class
-    if (document.getElementById('dropdownMenu')!.classList.contains('group-hover:block')) {
-      document.getElementById('dropdownMenu')!.classList.remove('group-hover:block');
-    } else {
-      document.getElementById('dropdownMenu')!.classList.add('group-hover:block');
-    }
+    document.getElementById('dropdownMenu')!.classList.toggle('hidden');
+
   }
 
   search(): void {
