@@ -115,7 +115,12 @@ export class AppComponent {
   }
 
   toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+    // if has class
+    if (document.getElementById('dropdownMenu')!.classList.contains('group-hover:block')) {
+      document.getElementById('dropdownMenu')!.classList.remove('group-hover:block');
+    } else {
+      document.getElementById('dropdownMenu')!.classList.add('group-hover:block');
+    }
   }
 
   search(): void {

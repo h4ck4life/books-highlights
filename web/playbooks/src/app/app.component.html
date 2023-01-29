@@ -22,8 +22,8 @@
           (click)="toggleMenu()"
         >
         </fa-icon>
-        <div class="absolute w-fit z-10 hidden bg-gray-100 group-hover:block rounded -inset-x-16">
-          <div class="w-fit shadow-md">
+        <div id="dropdownMenu" (click)="toggleMenu()" class="absolute w-fit z-10 hidden bg-gray-100 group-hover:block rounded -inset-x-16">
+          <div class="w-fit shadow-lg">
             <div 
             (click)="toggleSort()"
             class="flex flex-row cursor-pointer px-6 py-3 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
