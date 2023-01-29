@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faRotate, faMoon, faSun, faArrowDownWideShort } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faRotate, 
+  faMoon, 
+  faSun, 
+  faArrowDownWideShort, 
+  faBars,
+  faSearch, 
+} from '@fortawesome/free-solid-svg-icons';
 import { faGooglePlay } from '@fortawesome/free-brands-svg-icons';
 import { BookService } from './book.service';
 
@@ -16,9 +23,12 @@ export class AppComponent {
   faMoon = faMoon;
   faSun = faSun;
   faArrowDownWideShort = faArrowDownWideShort;
+  faBars = faBars;
+  faSearch = faSearch;
 
   isSyncing = false;
   isDarkMode = false;
+  isMenuOpen = true;
 
   constructor(
     private bookService: BookService,
@@ -102,5 +112,9 @@ export class AppComponent {
     } else {
       this.router.navigate(['/'], { replaceUrl: true });
     }
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 }

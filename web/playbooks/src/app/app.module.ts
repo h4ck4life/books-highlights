@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { BooklistComponent } from './booklist/booklist.component';
 import { NotelistComponent } from './notelist/notelist.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NotesearchComponent } from './notesearch/notesearch.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BooklistComponent,
-    NotelistComponent
+    NotelistComponent,
+    NotesearchComponent
   ],
   imports: [
     BrowserModule,

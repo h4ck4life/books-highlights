@@ -17,14 +17,19 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.*;
-import org.apache.lucene.search.grouping.DistinctValuesCollector;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class NotesIndexer {
@@ -52,14 +57,16 @@ public class NotesIndexer {
     //indexNotes();
   }
 
-  public static boolean add(IndexWriter indexWriter, String id, String note, String bookTitle) throws IOException {
+  public static boolean add(IndexWriter indexWriter, String id, String note, String bookId, String bookTitle) throws IOException {
     // create a new document and add fields to it
     Document doc = new Document();
     StringField idField = new StringField("id", id, Field.Store.YES);
     TextField textFieldNote = new TextField("note", note, Field.Store.YES);
+    StringField idFieldBookId = new StringField("bookId", bookId, Field.Store.YES);
     TextField textFieldBookTitle = new TextField("bookTitle", bookTitle, Field.Store.YES);
     doc.add(idField);
     doc.add(textFieldNote);
+    doc.add(idFieldBookId);
     doc.add(textFieldBookTitle);
 
     // add the document to the index
@@ -81,8 +88,14 @@ public class NotesIndexer {
 
     for (Note note : notes) {
       try {
-        add(indexWriter, note.getId().toString(), note.getGetGoogleBookNote(), note.getBook().getBookTitle());
-        logger.info("Added note " + note.getGetGoogleBookNote());
+        add(
+          indexWriter,
+          note.getId().toString(),
+          note.getGetGoogleBookNote(),
+          String.valueOf(note.getBook().getId()),
+          note.getBook().getBookTitle()
+        );
+        logger.info("Added note ID: " + note.getId());
       } catch (IOException e) {
         logger.error(e.getMessage());
         indexWriter.close();
@@ -107,7 +120,7 @@ public class NotesIndexer {
     Query query = parser.parse(queryString);
 
     // search for the query
-    TopDocs results = searcher.search(query, 10); // number of maximum result to return
+    TopDocs results = searcher.search(query, 30); // number of maximum result to return
 
     List<Map> searchResultsList = new ArrayList<>();
 
@@ -118,6 +131,7 @@ public class NotesIndexer {
       Map<String, String> searchResultsMap = new HashMap<>();
       searchResultsMap.put("noteId", doc.get("id"));
       searchResultsMap.put("noteText", doc.get("note"));
+      searchResultsMap.put("bookId", doc.get("bookId"));
       searchResultsMap.put("bookTitle", doc.get("bookTitle"));
 
       searchResultsList.add(searchResultsMap);

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/internal/Observable';
 import { Notes } from './Notes';
 import { Books } from './Books';
+import { Search } from './Search';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,10 @@ export class BookService {
   syncBook(id: string, pin: string): Observable<Sync> {
     const body = { 'pin': pin };
     return this.http.post<Sync>(this.getHostname() + '/api/books/' + id + '/sync', body);
+  }
+
+  searchNotes(query: string): Observable<Search> {
+    return this.http.get<Search>(this.getHostname() + '/api/notes/search/' + query);
   }
 
   private getHostname(): string {

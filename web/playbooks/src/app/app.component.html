@@ -2,30 +2,114 @@
   <div id="header" class="flex flex-row">
     <div>
       <a routerLink="/" routerLinkActive="active">
-        <fa-icon [icon]="faGooglePlay" class="text-cyan-700 dark:text-cyan-500 text-xl"></fa-icon>
-        <span class="text-xl font-extrabold ml-2 text-cyan-700 dark:text-cyan-500">PlayBook</span><span class="text-xl ml-1 text-gray-500 dark:text-gray-400">Notes</span>
+        <fa-icon
+          [icon]="faGooglePlay"
+          class="text-cyan-700 dark:text-cyan-500 text-xl"
+        ></fa-icon>
+        <span
+          class="text-xl font-extrabold ml-2 text-cyan-700 dark:text-cyan-500"
+          >PlayBook</span
+        ><span class="text-xl ml-1 text-gray-500 dark:text-gray-400"
+          >Notes</span
+        >
       </a>
     </div>
-    <div class="grow text-right">
-      <span *ngIf="isSyncing" class="text-gray-500 animate-pulse hidden sm:inline">Syncing..</span>
-      <fa-icon 
-      [icon]="faRotate" 
-      size="lg" 
-      class="cursor-pointer ml-3 text-gray-500" 
-      (click)="syncBooks()"
-      [spin]="isSyncing"
-      style="--fa-animation-duration: 0.7s"
+    <div class="flex grow flex-row-reverse">
+      <!-- <span
+        *ngIf="isSyncing"
+        class="text-gray-500 animate-pulse hidden sm:inline"
+        >Syncing..</span
+      >
+      <fa-icon
+        [icon]="faRotate"
+        size="lg"
+        class="cursor-pointer ml-3 text-gray-500"
+        (click)="syncBooks()"
+        [spin]="isSyncing"
+        style="--fa-animation-duration: 0.7s"
       ></fa-icon>
-      <fa-icon [icon]="isDarkMode ? faSun : faMoon" class="ml-5 text-gray-500 text-xl cursor-pointer" (click)="toggleDarkMode()"></fa-icon>
-      <fa-icon [icon]="faArrowDownWideShort" class="ml-5 text-gray-500 text-xl cursor-pointer" (click)="toggleSort()"></fa-icon>
+      <fa-icon
+        [icon]="isDarkMode ? faSun : faMoon"
+        class="ml-5 text-gray-500 text-xl cursor-pointer"
+        (click)="toggleDarkMode()"
+      >
+      </fa-icon>
+      <fa-icon
+        [icon]="faArrowDownWideShort"
+        class="ml-5 text-gray-500 text-xl cursor-pointer"
+        (click)="toggleSort()"
+      >
+      </fa-icon> -->
+      <div class="relative group w-fit">
+        <fa-icon
+          [icon]="faBars"
+          class="ml-3 text-gray-500 text-xl cursor-pointer"
+          (click)="toggleMenu()"
+        >
+        </fa-icon>
+        <div class="absolute w-fit z-10 hidden bg-gray-100 group-hover:block rounded -inset-x-14">
+          <div class="w-fit shadow-md">
+            <div 
+            (click)="toggleSort()"
+            class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
+              <fa-icon
+                [icon]="faArrowDownWideShort"
+                class="text-gray-500 text-xl"
+              >
+              </fa-icon>
+              <span class="ml-3">Sort</span>
+            </div>
+            <div
+              (click)="toggleDarkMode()"
+              class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900"
+            >
+              <fa-icon
+                [icon]="isDarkMode ? faSun : faMoon"
+                class="text-gray-500 text-xl"
+              >
+              </fa-icon>
+              <span class="ml-3">{{isDarkMode ? 'Bright' : 'Dark'}}</span>
+            </div>
+            <div 
+            (click)="syncBooks()" 
+            class="flex flex-row cursor-pointer px-4 py-2 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-900">
+              <fa-icon
+                [icon]="faRotate"
+                size="lg"
+                class="text-gray-500"
+                [spin]="isSyncing"
+                style="--fa-animation-duration: 0.7s"
+              ></fa-icon>
+              <span class="ml-3">Sync</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <fa-icon
+        [icon]="faSearch"
+        class="ml-5 text-gray-500 text-xl cursor-pointer"
+        (click)="toggleMenu()"
+      >
+      </fa-icon>
     </div>
   </div>
-  <div id="middle_container" class="bg-zinc-100 dark:bg-slate-900 rounded-lg shadow-sm mt-4">
+  <div
+    id="middle_container"
+    class="bg-zinc-100 dark:bg-slate-900 rounded-lg shadow-sm mt-4"
+  >
     <router-outlet></router-outlet>
   </div>
 </div>
 <div id="footer_container" class="mt-4 mb-2">
   <div class="text-center">
-    <span class="text-sm text-gray-400">Made by <a href="https://twitter.com/h4ck4life" class="text-cyan-700 dark:text-cyan-600" target="_blank">@h4ck4life</a></span>
+    <span class="text-sm text-gray-400"
+      >Made by
+      <a
+        href="https://twitter.com/h4ck4life"
+        class="text-cyan-700 dark:text-cyan-600"
+        target="_blank"
+        >@h4ck4life</a
+      ></span
+    >
   </div>
 </div>
