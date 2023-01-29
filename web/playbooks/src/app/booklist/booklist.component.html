@@ -1,8 +1,8 @@
 <div *ngIf="hasLoaded; else elseBlock">
   <div *ngFor="let book of books.data">
-    <div class="p-4 border-t-2 border-gray-300 dark:border-slate-800">
+    <div class="p-4 border-t-2 border-gray-200 dark:border-slate-800">
       <div class="flex flex-row">
-        <div class="border-r-2 border-gray-300 dark:border-slate-800"></div>
+        <div class="border-r-2 border-gray-200 dark:border-slate-800"></div>
         <div class="pl-2">
           <a [routerLink]="['/page/book', book.id]">
             <span>{{ book.bookTitle }}</span>
@@ -21,7 +21,12 @@
 </div>
 <ng-template #elseBlock>
   <div class="p-4 text-center">
-    <span>Loading..</span>
+    <fa-icon
+        [icon]="faCircleNotch"
+        [spin]="true"
+        style="--fa-animation-duration: 0.7s"
+        class="text-gray-400 fa-2x"
+      ></fa-icon>
   </div>
 </ng-template>
 <div *ngIf="hasData">

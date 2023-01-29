@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { BookService } from '../book.service';
 import { Books } from '../Books';
 
@@ -14,6 +15,8 @@ export class BooklistComponent {
     private bookService: BookService,
     private route: ActivatedRoute,
   ) { }
+
+  faCircleNotch = faCircleNotch;
 
   hasLoaded = false;
   hasData = false;

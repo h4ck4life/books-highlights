@@ -4,6 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { Location } from '@angular/common';
 import { BookService } from '../book.service';
 import { Notes } from '../Notes';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-notelist',
@@ -23,6 +24,8 @@ export class NotelistComponent {
     data: [],
     success: false
   };
+
+  faCircleNotch = faCircleNotch;
 
   hasLoaded = false;
   hasData = false;
