@@ -117,7 +117,7 @@ public class NotesIndexer {
     MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"note"}, new StandardAnalyzer());
 
     // parse the query
-    Query query = parser.parse(queryString);
+    Query query = parser.parse(queryString + "~1");
 
     // search for the query
     TopDocs results = searcher.search(query, 30); // number of maximum result to return
