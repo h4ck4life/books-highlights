@@ -125,7 +125,7 @@ public class GoogleApi {
     getDriveService().files().export(fileId, "application/zip").executeMediaAndDownloadTo(outputStream);
   }
 
-  public static String getBookCover() {
+  public static String syncBookCovers() {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
     List<Book> book = entityManager.createQuery("SELECT b from Book b", Book.class)
       .getResultList();

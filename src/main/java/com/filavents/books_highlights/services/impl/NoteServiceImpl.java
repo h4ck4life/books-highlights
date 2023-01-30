@@ -115,7 +115,7 @@ public class NoteServiceImpl implements NoteService {
     entityManager.close();
 
     startNotesIndexing();
-    GoogleApi.getBookCover();
+    GoogleApi.syncBookCovers();
 
     return true;
   }
