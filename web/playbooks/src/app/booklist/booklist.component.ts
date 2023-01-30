@@ -55,4 +55,13 @@ export class BooklistComponent {
     });
   }
 
+  getBookCover(bookTitle: string): string {
+    let imgSrc = '';
+    this.bookService.getBookCover(bookTitle).pipe().subscribe(data => {
+      console.log(data.items![0].volumeInfo!.imageLinks!.thumbnail);
+      imgSrc = data.items![0].volumeInfo!.imageLinks!.thumbnail || '';
+    });
+    return imgSrc;
+  }
+
 }

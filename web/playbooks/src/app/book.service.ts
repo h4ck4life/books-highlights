@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Notes } from './Notes';
 import { Books } from './Books';
 import { Search } from './Search';
+import { GoogleBookInfo } from './GoogleBookInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,10 @@ export class BookService {
 
   searchNotes(query: string): Observable<Search> {
     return this.http.get<Search>(this.getHostname() + '/api/notes/search/' + query);
+  }
+
+  getBookCover(booktitle: string): Observable<GoogleBookInfo> {
+    return this.http.get('https://www.googleapis.com/books/v1/volumes?q=' + booktitle + '&orderBy=relevance&printType=BOOKS');
   }
 
   private getHostname(): string {

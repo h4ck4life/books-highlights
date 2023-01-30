@@ -86,7 +86,6 @@ export class AppComponent {
             location.assign(data.redirectUrl!);
           } else {
             location.assign('/');
-            //this.router.navigate(['/'], { replaceUrl: true });
           }
         }, error => {
           this.isSyncing = false;
