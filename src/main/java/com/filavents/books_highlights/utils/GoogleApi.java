@@ -1,5 +1,9 @@
 package com.filavents.books_highlights.utils;
 
+import com.filavents.books_highlights.configs.Database;
+import com.filavents.books_highlights.dto.googlebooks.Converter;
+import com.filavents.books_highlights.dto.googlebooks.GoogleBookInfo;
+import com.filavents.books_highlights.entity.Book;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -14,6 +18,10 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
+import jakarta.persistence.EntityManager;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -21,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class GoogleApi {
+
+  private static OkHttpClient client = new OkHttpClient();
 
   private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -113,5 +123,31 @@ public class GoogleApi {
    */
   public static void getFileById(String fileId, ByteArrayOutputStream outputStream) throws IOException, GeneralSecurityException {
     getDriveService().files().export(fileId, "application/zip").executeMediaAndDownloadTo(outputStream);
+  }
+
+  public static String getBookCover() {
+    EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
+    List<Book> book = entityManager.createQuery("SELECT b from Book b", Book.class)
+      .getResultList();
+    entityManager.close();
+
+    for (Book b : book) {
+      Request request = new Request.Builder()
+        .url("https://www.googleapis.com/books/v1/volumes?q="+ b.getBookTitle() + "&orderBy=relevance&printType=BOOKS")
+        .build();
+
+      try (Response response = client.newCall(request).execute()) {
+        GoogleBookInfo googleBookInfo = Converter.fromJsonString(response.body().string());
+        if(googleBookInfo.getItems() != null && googleBookInfo.getItems().size() > 0) {
+          if(googleBookInfo.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
+            System.out.println(googleBookInfo.getItems().get(0).getVolumeInfo().getImageLinks().getThumbnail());
+          }
+        }
+      } catch (IOException e) {
+        logger.error(e.getMessage());
+        throw new RuntimeException(e);
+      }
+    }
+    return null;
   }
 }
