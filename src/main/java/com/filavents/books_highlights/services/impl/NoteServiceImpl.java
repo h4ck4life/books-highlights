@@ -24,6 +24,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -205,6 +206,11 @@ public class NoteServiceImpl implements NoteService {
           logger.info("All files processed");
         } else {
           logger.error("Some files failed to process", ar.cause());
+          Notification.sendEmail(
+            "Some books sync failed",
+            "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
+            System.getenv("EMAIL_TO")
+          );
         }
       });
 
@@ -213,7 +219,7 @@ public class NoteServiceImpl implements NoteService {
 
       Notification.sendEmail(
         "Books sync completed",
-        "All books sync completed in " + (System.currentTimeMillis() - startTime) + " ms",
+        "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
         System.getenv("EMAIL_TO")
       );
 
@@ -278,6 +284,14 @@ public class NoteServiceImpl implements NoteService {
     entityManager.persist(book);
     entityManager.getTransaction().commit();
     entityManager.close();
+  }
+
+  private String msToMinutes(long ms) {
+    return String.format("%02d:%02d",
+      TimeUnit.MILLISECONDS.toMinutes(ms),
+      TimeUnit.MILLISECONDS.toSeconds(ms) -
+        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))
+    );
   }
 }
 

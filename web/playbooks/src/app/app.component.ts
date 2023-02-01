@@ -70,7 +70,6 @@ export class AppComponent {
             location.assign(data.redirectUrl!);
           } else {
             location.reload();
-            //this.router.navigate(['/page/book/' + bookId], { replaceUrl: true });
           }
         }, error => {
           this.isSyncing = false;
@@ -86,6 +85,7 @@ export class AppComponent {
             location.assign(data.redirectUrl!);
           } else {
             location.assign('/');
+            alert('Books sync now in-progress. Status will be sent to your email soon.');
           }
         }, error => {
           this.isSyncing = false;
