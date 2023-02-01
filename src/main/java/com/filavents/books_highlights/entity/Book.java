@@ -47,6 +47,9 @@ public class Book {
   @Column(name = "drive_webViewLink", nullable = false)
   private String driveWebViewLink;
 
+  @Column(name = "drive_thumbnailLink")
+  private String driveThumbnailLink;
+
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JsonIgnore
   private List<Note> notes;
@@ -158,26 +161,15 @@ public class Book {
     return notes;
   }
 
-  public void setNotes(List<Note> notes) {
-    this.notes = notes;
+  public String getDriveThumbnailLink() {
+    return driveThumbnailLink;
   }
 
-  @Override
-  public String toString() {
-    return "Book{" +
-      "id=" + id +
-      ", driveId='" + driveId + '\'' +
-      ", bookTitle='" + bookTitle + '\'' +
-      ", bookAuthor='" + bookAuthor + '\'' +
-      ", bookNotesCount='" + bookNotesCount + '\'' +
-      ", driveMimeType='" + driveMimeType + '\'' +
-      ", driveModifiedTime=" + driveModifiedTime +
-      ", driveCreatedTime=" + driveCreatedTime +
-      ", driveFileName='" + driveFileName + '\'' +
-      ", driveFileSize=" + driveFileSize +
-      ", driveFileExtension='" + driveFileExtension + '\'' +
-      ", driveWebViewLink='" + driveWebViewLink + '\'' +
-      ", notes=" + notes +
-      '}';
+  public void setDriveThumbnailLink(String driveThumbnailLink) {
+    this.driveThumbnailLink = driveThumbnailLink;
+  }
+
+  public void setNotes(List<Note> notes) {
+    this.notes = notes;
   }
 }

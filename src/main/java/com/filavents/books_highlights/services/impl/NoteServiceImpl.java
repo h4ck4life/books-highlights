@@ -6,6 +6,7 @@ import com.filavents.books_highlights.entity.Note;
 import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.utils.GoogleApi;
 import com.filavents.books_highlights.utils.NotesIndexer;
+import com.filavents.books_highlights.utils.Notification;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import io.vertx.core.CompositeFuture;
@@ -115,7 +116,6 @@ public class NoteServiceImpl implements NoteService {
     entityManager.close();
 
     startNotesIndexing();
-    GoogleApi.syncBookCovers();
 
     return true;
   }
@@ -150,6 +150,8 @@ public class NoteServiceImpl implements NoteService {
 
   @Override
   public boolean syncBooks() throws GeneralSecurityException, IOException {
+
+    long startTime = System.currentTimeMillis();
 
     logger.info("Syncing books..");
     clearAllBooks();
@@ -207,6 +209,13 @@ public class NoteServiceImpl implements NoteService {
       });
 
       startNotesIndexing();
+      GoogleApi.syncBookCovers();
+
+      Notification.sendEmail(
+        "Books sync completed",
+        "All books sync completed in " + (System.currentTimeMillis() - startTime) + " ms",
+        System.getenv("EMAIL_TO")
+      );
 
       return true;
     }

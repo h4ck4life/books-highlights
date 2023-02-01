@@ -58,6 +58,7 @@ public class MainVerticle {
     router.get("/api/books/:bookId").respond(NoteController::getNotesByBookId);
     router.get("/api/notes/search/:query").respond(NoteController::searchNotes);
     router.get("/api/oauth2callback").blockingHandler(NoteController::oauth2callback);
+    router.get("/api/books/cover/sync").blockingHandler(NoteController::syncBookCovers);
 
     // setindexpage return index.html page
     router.get("/").handler(ctx -> ctx.response().sendFile("web/playbooks/dist/playbooks/index.html"));

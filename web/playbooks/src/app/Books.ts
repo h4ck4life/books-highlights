@@ -15,6 +15,7 @@ export interface Datum {
     driveFileName?:      string;
     driveFileSize?:      number;
     driveFileExtension?: null;
+    driveThumbnailLink?: string;
     driveWebViewLink?:   string;
     noteCount?:          number;
 }

@@ -30,7 +30,7 @@ import java.util.List;
 
 public class GoogleApi {
 
-  private static OkHttpClient client = new OkHttpClient();
+  private static final OkHttpClient client = new OkHttpClient();
 
   private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
   private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -38,7 +38,7 @@ public class GoogleApi {
   private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
   private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-  static Logger logger = LoggerFactory.getLogger(GoogleApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(GoogleApi.class);
 
   private GoogleApi() {
   }
@@ -68,8 +68,12 @@ public class GoogleApi {
 
   public static boolean setCredentials(String code) {
     try {
-      TokenRequest tokenRequest = getGoogleAuthorizationFlow().newTokenRequest(code).setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback");
-      Credential credential = getGoogleAuthorizationFlow().createAndStoreCredential(tokenRequest.execute(), System.getenv("USER"));
+      TokenRequest tokenRequest = getGoogleAuthorizationFlow().newTokenRequest(code)
+        .setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback");
+      Credential credential = getGoogleAuthorizationFlow().createAndStoreCredential(
+        tokenRequest.execute(),
+        System.getenv("USER")
+      );
       return credential != null;
     } catch (GeneralSecurityException | IOException e) {
       logger.error(e.getMessage());
@@ -78,7 +82,9 @@ public class GoogleApi {
   }
 
   public static String getAuthorizeUrl() throws IOException, GeneralSecurityException {
-    return getGoogleAuthorizationFlow().newAuthorizationUrl().setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback").build();
+    return getGoogleAuthorizationFlow().newAuthorizationUrl()
+      .setRedirectUri(System.getenv("HOSTNAME") + "/api/oauth2callback")
+      .build();
   }
 
   /**
@@ -122,32 +128,53 @@ public class GoogleApi {
    * @throws GeneralSecurityException
    */
   public static void getFileById(String fileId, ByteArrayOutputStream outputStream) throws IOException, GeneralSecurityException {
-    getDriveService().files().export(fileId, "application/zip").executeMediaAndDownloadTo(outputStream);
+    getDriveService().files()
+      .export(fileId, "application/zip")
+      .executeMediaAndDownloadTo(outputStream);
   }
 
-  public static String syncBookCovers() {
+  public static boolean syncBookCovers() {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
-    List<Book> book = entityManager.createQuery("SELECT b from Book b", Book.class)
-      .getResultList();
+    List<Book> book = entityManager.createQuery("SELECT b from Book b", Book.class).getResultList();
     entityManager.close();
 
-    for (Book b : book) {
-      Request request = new Request.Builder()
-        .url("https://www.googleapis.com/books/v1/volumes?q="+ b.getBookTitle() + "&orderBy=relevance&printType=BOOKS")
-        .build();
+    if (book.isEmpty()) {
+      return false;
+    } else {
+      EntityManager entityManagerUpdate = Database.getEntityManagerFactory().createEntityManager();
+      for (Book b : book) {
+        Request request = new Request.Builder()
+          .url("https://www.googleapis.com/books/v1/volumes?q=" + b.getBookTitle() + "&orderBy=relevance&printType=BOOKS")
+          .build();
 
-      try (Response response = client.newCall(request).execute()) {
-        GoogleBookInfo googleBookInfo = Converter.fromJsonString(response.body().string());
-        if(googleBookInfo.getItems() != null && googleBookInfo.getItems().size() > 0) {
-          if(googleBookInfo.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
-            System.out.println(googleBookInfo.getItems().get(0).getVolumeInfo().getImageLinks().getThumbnail());
+        try (Response response = client.newCall(request).execute()) {
+          GoogleBookInfo googleBookInfo = Converter.fromJsonString(response.body().string());
+          if (googleBookInfo.getItems() != null && googleBookInfo.getItems().size() > 0) {
+            if (googleBookInfo.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
+              String bookCover = googleBookInfo.getItems()
+                .get(0)
+                .getVolumeInfo()
+                .getImageLinks()
+                .getThumbnail();
+
+              entityManagerUpdate.getTransaction().begin();
+              entityManagerUpdate.createQuery("UPDATE Book b2 SET b2.driveThumbnailLink = :driveThumbnailLink WHERE b2.id = :id")
+                .setParameter("driveThumbnailLink", bookCover)
+                .setParameter("id", b.getId())
+                .executeUpdate();
+              entityManagerUpdate.getTransaction().commit();
+
+              logger.info("Book cover link: " + bookCover);
+            }
           }
+        } catch (Exception e) {
+          entityManagerUpdate.close();
+          logger.error(e.getMessage());
+          return false;
         }
-      } catch (IOException e) {
-        logger.error(e.getMessage());
-        throw new RuntimeException(e);
       }
+      entityManagerUpdate.close();
     }
-    return null;
+    return true;
   }
 }

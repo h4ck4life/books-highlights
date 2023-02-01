@@ -34,16 +34,40 @@ public class NoteController {
 
   static Logger logger = LoggerFactory.getLogger(NoteController.class);
 
+  public static void syncBookCovers(RoutingContext ctx) {
+    ctx.response()
+      .setStatusCode(200)
+      .putHeader("content-type", "application/json")
+      .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
+
+    Future.future(promise -> {
+      boolean result = GoogleApi.syncBookCovers();
+      promise.complete(result);
+    });
+  }
+
   public static void syncBooks(RoutingContext ctx) {
     boolean isOk = verifyPinViaGoogleAuthenticator(ctx);
     if (isOk) {
       try {
         if (GoogleApi.getCredentials() != null) {
-          boolean result = noteService.syncBooks();
           ctx.response()
             .setStatusCode(200)
             .putHeader("content-type", "application/json")
-            .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+            .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
+
+          Future.future(promise -> {
+            try {
+              boolean result = noteService.syncBooks();
+              promise.complete(result);
+            } catch (GeneralSecurityException e) {
+              logger.error(e.getMessage());
+              promise.fail(e.getMessage());
+            } catch (IOException e) {
+              logger.error(e.getMessage());
+              promise.fail(e.getMessage());
+            }
+          });
         } else {
           ctx.response()
             .setStatusCode(200)

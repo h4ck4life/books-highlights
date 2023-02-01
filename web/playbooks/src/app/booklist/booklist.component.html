@@ -4,9 +4,10 @@
       <div class="flex flex-row">
         <div class="flex-wrap w-1/6 pr-2">
           <img
-            src="http://lgimages.s3.amazonaws.com/nc-sm.gif"
+            [src]="book.driveThumbnailLink || 'http://lgimages.s3.amazonaws.com/nc-sm.gif'"
             class="w-20 h-26 object-cover rounded"
             alt="Cover"
+            loading="lazy"
           />
         </div>
         <div class="border-r-2 border-gray-200 dark:border-slate-800"></div>
