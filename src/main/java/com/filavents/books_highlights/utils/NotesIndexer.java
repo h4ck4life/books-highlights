@@ -34,7 +34,6 @@ import java.util.Map;
 
 public class NotesIndexer {
 
-  private static IndexWriterConfig config = null;
   private static Directory directory = null;
 
   static Logger logger = LoggerFactory.getLogger(NotesIndexer.class);
@@ -45,7 +44,6 @@ public class NotesIndexer {
   static {
     try {
       directory = FSDirectory.open(Paths.get("index"));
-      config = new IndexWriterConfig(new StandardAnalyzer());
     } catch (IOException e) {
       logger.error(e.getMessage());
     }
@@ -81,6 +79,7 @@ public class NotesIndexer {
       .getResultList();
     entityManager.close();
 
+    IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
     IndexWriter indexWriter = new IndexWriter(directory, config);
 
     // Delete existing index

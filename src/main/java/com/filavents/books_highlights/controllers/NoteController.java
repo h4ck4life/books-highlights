@@ -56,17 +56,16 @@ public class NoteController {
             .putHeader("content-type", "application/json")
             .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
 
+          // start new thread
           Future.future(promise -> {
+            boolean result = false;
             try {
-              boolean result = noteService.syncBooks();
-              promise.complete(result);
-            } catch (GeneralSecurityException e) {
-              logger.error(e.getMessage());
-              promise.fail(e.getMessage());
-            } catch (IOException e) {
-              logger.error(e.getMessage());
-              promise.fail(e.getMessage());
+              result = noteService.syncBooks();
+            } catch (Exception e) {
+              logger.error("Error syncing books: " + e.getMessage());
+              throw new RuntimeException(e);
             }
+            promise.complete(result);
           });
         } else {
           ctx.response()
