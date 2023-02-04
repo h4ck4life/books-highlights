@@ -1,5 +1,5 @@
-<div *ngIf="hasLoaded; else elseBlock">
-  <div *ngFor="let note of searchResults.data">
+<div *ngIf="hasLoaded; else elseBlock" class="md:flex md:flex-row md:flex-wrap">
+  <div *ngFor="let note of searchResults.data" class="md:w-1/2">
     <div class="p-4 border-t-2 border-gray-200 dark:border-slate-800">
       <div class="flex flex-row">
         <div class="border-r-2 border-cyan-600"></div>
