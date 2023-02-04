@@ -1,6 +1,6 @@
 <div *ngIf="hasLoaded; else elseBlock" class="md:flex md:flex-row md:flex-wrap">
   <div *ngFor="let book of books.data" class="md:w-1/2">
-    <div class="p-4">
+    <div class="p-2 mb-6 md:p-4">
       <div class="flex flex-row">
         <div class="flex-wrap w-1/6 pr-2">
           <a [routerLink]="['/page/book', book.id]">
