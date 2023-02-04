@@ -1,11 +1,11 @@
-<div *ngIf="hasLoaded; else elseBlock">
-  <div *ngFor="let book of books.data">
+<div *ngIf="hasLoaded; else elseBlock" class="md:flex md:flex-row md:flex-wrap">
+  <div *ngFor="let book of books.data" class="md:w-1/2">
     <div class="p-4 border-t-2 border-gray-200 dark:border-slate-800">
       <div class="flex flex-row">
         <div class="flex-wrap w-1/6 pr-2">
           <img
             [src]="book.driveThumbnailLink || 'http://lgimages.s3.amazonaws.com/nc-sm.gif'"
-            class="w-20 h-26 object-cover rounded"
+            class="w-32 h-26 object-cover rounded"
             alt="Cover"
             loading="lazy"
           />
