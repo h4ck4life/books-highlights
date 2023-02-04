@@ -3,12 +3,17 @@
     <div class="p-4">
       <div class="flex flex-row">
         <div class="flex-wrap w-1/6 pr-2">
-          <img
-            [src]="book.driveThumbnailLink || 'http://lgimages.s3.amazonaws.com/nc-sm.gif'"
-            class="w-32 h-26 object-cover rounded"
-            alt="Cover"
-            loading="lazy"
-          />
+          <a [routerLink]="['/page/book', book.id]">
+            <img
+              [src]="
+                book.driveThumbnailLink ||
+                'http://lgimages.s3.amazonaws.com/nc-sm.gif'
+              "
+              class="w-32 h-26 object-cover rounded"
+              alt="Cover"
+              loading="lazy"
+            />
+          </a>
         </div>
         <div class="pl-2 w-5/6">
           <a [routerLink]="['/page/book', book.id]">
@@ -29,11 +34,11 @@
 <ng-template #elseBlock>
   <div class="p-4 text-center">
     <fa-icon
-        [icon]="faCircleNotch"
-        [spin]="true"
-        style="--fa-animation-duration: 0.7s"
-        class="text-gray-400 fa-2x"
-      ></fa-icon>
+      [icon]="faCircleNotch"
+      [spin]="true"
+      style="--fa-animation-duration: 0.7s"
+      class="text-gray-400 fa-2x"
+    ></fa-icon>
   </div>
 </ng-template>
 <div *ngIf="hasData">
