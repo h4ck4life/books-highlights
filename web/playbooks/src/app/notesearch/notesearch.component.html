@@ -9,7 +9,9 @@
       </div>
       <div class="flex flex-row mt-6 dark:text-gray-500 text-gray-400">
         <div class="flex-grow">
-          <span class="text-xs block">{{ note.bookTitle }}</span>
+          <a [routerLink]="['/page/book', note.bookId]">
+            <span class="text-xs block">{{ note.bookTitle }}</span>
+          </a>
         </div>
         <div class="flex-grow text-right">
           <a
