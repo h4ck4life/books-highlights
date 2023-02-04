@@ -115,9 +115,7 @@ public class NoteServiceImpl implements NoteService {
     zipInputStream.close();
 
     entityManager.close();
-
     startNotesIndexing();
-
     return true;
   }
 
@@ -145,7 +143,6 @@ public class NoteServiceImpl implements NoteService {
       .executeUpdate();
     entityManager.getTransaction().commit();
     entityManager.close();
-
     return book;
   }
 
@@ -222,7 +219,6 @@ public class NoteServiceImpl implements NoteService {
         "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
         System.getenv("EMAIL_TO")
       );
-
       return true;
     }
   }

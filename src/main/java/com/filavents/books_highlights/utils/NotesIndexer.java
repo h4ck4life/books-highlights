@@ -49,14 +49,7 @@ public class NotesIndexer {
     }
   }
 
-  public static void main(String[] args) throws Exception {
-    //initIndex();
-    System.out.println(search("agile best practice").asMap().toString());
-    //indexNotes();
-  }
-
   public static boolean add(IndexWriter indexWriter, String id, String note, String bookId, String bookTitle) throws IOException {
-    // create a new document and add fields to it
     Document doc = new Document();
     StringField idField = new StringField("id", id, Field.Store.YES);
     TextField textFieldNote = new TextField("note", note, Field.Store.YES);
@@ -67,9 +60,7 @@ public class NotesIndexer {
     doc.add(idFieldBookId);
     doc.add(textFieldBookTitle);
 
-    // add the document to the index
     indexWriter.addDocument(doc);
-
     return true;
   }
 
@@ -82,7 +73,6 @@ public class NotesIndexer {
     IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
     IndexWriter indexWriter = new IndexWriter(directory, config);
 
-    // Delete existing index
     indexWriter.deleteAll();
 
     for (Note note : notes) {
@@ -107,23 +97,17 @@ public class NotesIndexer {
   }
 
   public static JsonResponse search(String queryString) throws ParseException, IOException {
-
     IndexReader reader = DirectoryReader.open(directory);
     IndexSearcher searcher = new IndexSearcher(reader);
 
-    // create a query parser
-    //QueryParser parser = new QueryParser("note", new StandardAnalyzer());
-    MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"note"}, new StandardAnalyzer());
-
-    // parse the query
+    MultiFieldQueryParser parser = new MultiFieldQueryParser(
+      new String[]{"note", "bookTitle"},
+      new StandardAnalyzer()
+    );
     Query query = parser.parse(queryString + "~1");
-
-    // search for the query
-    TopDocs results = searcher.search(query, 30); // number of maximum result to return
+    TopDocs results = searcher.search(query, 30);
 
     List<Map> searchResultsList = new ArrayList<>();
-
-    // iterate over the results and print the documents
     for (ScoreDoc scoreDoc : results.scoreDocs) {
       Document doc = searcher.doc(scoreDoc.doc);
 
@@ -135,10 +119,7 @@ public class NotesIndexer {
 
       searchResultsList.add(searchResultsMap);
     }
-
-    // close the index reader
     reader.close();
-
     return new JsonResponse(true, searchResultsList);
   }
 

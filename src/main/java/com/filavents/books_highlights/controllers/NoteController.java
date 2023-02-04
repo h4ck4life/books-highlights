@@ -56,7 +56,6 @@ public class NoteController {
             .putHeader("content-type", "application/json")
             .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
 
-          // start new thread
           Future.future(promise -> {
             boolean result = false;
             try {
