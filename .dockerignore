@@ -1,0 +1,9 @@
+.mvn/
+.idea/
+.vscode/
+index/
+target/
+tmp/
+tokens/
+README.adoc
+booknotes_full.sqlite
