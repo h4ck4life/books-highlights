@@ -188,3 +188,5 @@ nbdist/
 /src/main/resources/credentials.json
 /booknotes_full.sqlite
 /index/
+/.vscode/
+/.mvn/

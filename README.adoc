@@ -2,7 +2,6 @@
 
 image:https://img.shields.io/badge/vert.x-4.3.7-purple.svg[link="https://vertx.io"]
 
-This application was generated using http://start.vertx.io
 
 == Building
 
@@ -19,6 +18,25 @@ To package your application:
 To run your application:
 ```
 ./mvnw clean compile exec:java
+```
+
+To build docker:
+```
+docker build -t playbooks .
+```
+
+To run docker image:
+```
+docker run --env-file .env -v $(pwd):/app -p 8088:8088 playbooks
+```
+
+To build angular:
+```bash
+cd web/playbooks
+npm install
+ng build --prod
+# or
+npx ng build --prod
 ```
 
 == Help
