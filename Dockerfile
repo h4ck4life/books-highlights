@@ -6,7 +6,7 @@ FROM maven:3.8.5-openjdk-17-slim
 WORKDIR /app
 
 # Copy the project files into the container at /app
-# COPY . /app
+COPY . /app
 
 # Compile and run the application
 # Note: The exec format CMD ["command", "param1", "param2"] is used here

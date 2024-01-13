@@ -27,7 +27,7 @@ docker build -t playbooks .
 
 To run docker image:
 ```
-docker run --env-file .env -v $(pwd):/app -p 8088:8088 playbooks
+docker run --env-file .env -v $(pwd)/booknotes_full.sqlite:/app/booknotes_full.sqlite -p 8088:8088 playbooks
 ```
 
 To build angular:
