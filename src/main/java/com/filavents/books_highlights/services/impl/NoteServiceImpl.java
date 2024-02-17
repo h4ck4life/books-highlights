@@ -9,6 +9,8 @@ import com.filavents.books_highlights.utils.NotesIndexer;
 import com.filavents.books_highlights.utils.Notification;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.impl.logging.Logger;
@@ -31,12 +33,13 @@ import java.util.zip.ZipInputStream;
 public class NoteServiceImpl implements NoteService {
 
   static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
+  Dotenv dotenv = Dotenv.load();
 
   @Override
   public List<Book> getAllBooks() {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
     List<Book> books = entityManager.createQuery("SELECT b FROM Book b ORDER BY driveModifiedTime desc", Book.class)
-      .getResultList();
+        .getResultList();
     entityManager.close();
     if (books == null) {
       return Collections.emptyList();
@@ -48,9 +51,10 @@ public class NoteServiceImpl implements NoteService {
   @Override
   public List<Note> getNotesByBookId(Long id) {
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
-    List<Note> notes = entityManager.createQuery("SELECT n FROM Note n WHERE n.book.id = :id ORDER BY id ASC", Note.class)
-      .setParameter("id", id)
-      .getResultList();
+    List<Note> notes = entityManager
+        .createQuery("SELECT n FROM Note n WHERE n.book.id = :id ORDER BY id ASC", Note.class)
+        .setParameter("id", id)
+        .getResultList();
     entityManager.close();
     if (notes == null) {
       return Collections.emptyList();
@@ -79,9 +83,9 @@ public class NoteServiceImpl implements NoteService {
     if (zipEntry != null) {
       entityManager.getTransaction().begin();
       entityManager.createQuery("UPDATE Book b set b.driveModifiedTime = :driveModifiedTime WHERE b.id = :id")
-        .setParameter("id", book.getId())
-        .setParameter("driveModifiedTime", zipEntry.getLastModifiedTime().toInstant().toEpochMilli())
-        .executeUpdate();
+          .setParameter("id", book.getId())
+          .setParameter("driveModifiedTime", zipEntry.getLastModifiedTime().toInstant().toEpochMilli())
+          .executeUpdate();
       entityManager.getTransaction().commit();
     }
 
@@ -90,23 +94,23 @@ public class NoteServiceImpl implements NoteService {
       if (zipEntry.getName().endsWith(".html")) {
         Document doc = Jsoup.parse(new String(zipInputStream.readAllBytes()));
         doc.select("body > table > tbody > tr > td > table > tbody > tr")
-          .forEach(element -> {
-            String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
-            String noteDate = element.select("td:nth-child(2) > p:nth-child(3) > span").text();
-            String noteUrl = element.select("td:nth-child(3) > p > span > a").attr("href");
+            .forEach(element -> {
+              String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
+              String noteDate = element.select("td:nth-child(2) > p:nth-child(3) > span").text();
+              String noteUrl = element.select("td:nth-child(3) > p > span > a").attr("href");
 
-            Note note = new Note();
-            note.setGetGoogleBookNote(noteBody);
-            note.setNoteUrl(noteUrl);
-            note.setGoogleBookId(bookId);
-            note.setBook(book);
+              Note note = new Note();
+              note.setGetGoogleBookNote(noteBody);
+              note.setNoteUrl(noteUrl);
+              note.setGoogleBookId(bookId);
+              note.setBook(book);
 
-            logger.info(noteBody);
+              logger.info(noteBody);
 
-            entityManager.getTransaction().begin();
-            entityManager.persist(note);
-            entityManager.getTransaction().commit();
-          });
+              entityManager.getTransaction().begin();
+              entityManager.persist(note);
+              entityManager.getTransaction().commit();
+            });
         break;
       }
       zipEntry = zipInputStream.getNextEntry();
@@ -133,14 +137,14 @@ public class NoteServiceImpl implements NoteService {
 
     // Get book by id
     Book book = entityManager.createQuery("SELECT b FROM Book b WHERE b.id = :id", Book.class)
-      .setParameter("id", bookId)
-      .getSingleResult();
+        .setParameter("id", bookId)
+        .getSingleResult();
 
     // Delete existing notes by driveId
     entityManager.getTransaction().begin();
     entityManager.createQuery("DELETE FROM Note n WHERE n.book.id = :id")
-      .setParameter("id", book.getId())
-      .executeUpdate();
+        .setParameter("id", book.getId())
+        .executeUpdate();
     entityManager.getTransaction().commit();
     entityManager.close();
     return book;
@@ -204,10 +208,9 @@ public class NoteServiceImpl implements NoteService {
         } else {
           logger.error("Some files failed to process", ar.cause());
           Notification.sendEmail(
-            "Some books sync failed",
-            "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
-            System.getenv("EMAIL_TO")
-          );
+              "Some books sync failed",
+              "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
+              dotenv.get("EMAIL_TO"));
         }
       });
 
@@ -215,10 +218,9 @@ public class NoteServiceImpl implements NoteService {
       GoogleApi.syncBookCovers();
 
       Notification.sendEmail(
-        "Books sync completed",
-        "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
-        System.getenv("EMAIL_TO")
-      );
+          "Books sync completed",
+          "Completed in " + msToMinutes(System.currentTimeMillis() - startTime) + " minutes",
+          dotenv.get("EMAIL_TO"));
       return true;
     }
   }
@@ -242,7 +244,8 @@ public class NoteServiceImpl implements NoteService {
 
     // Extract book info
     String title = doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > h1 > span").text();
-    String author = doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > p:nth-child(2) > span").text();
+    String author = doc.select("body > table:nth-child(4) > tbody > tr > td:nth-child(2) > p:nth-child(2) > span")
+        .text();
     String notesCount = doc.select("body > h1:nth-child(12) > span").text();
 
     EntityManager entityManager = Database.getEntityManagerFactory().createEntityManager();
@@ -263,19 +266,19 @@ public class NoteServiceImpl implements NoteService {
 
     // Extract notes from book
     doc.select("body > table > tbody > tr > td > table > tbody > tr")
-      .forEach(element -> {
-        String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
-        String noteDate = element.select("td:nth-child(2) > p:nth-child(3) > span").text();
-        String noteUrl = element.select("td:nth-child(3) > p > span > a").attr("href");
+        .forEach(element -> {
+          String noteBody = element.select("td:nth-child(2) > p:nth-child(1) > span").text();
+          String noteDate = element.select("td:nth-child(2) > p:nth-child(3) > span").text();
+          String noteUrl = element.select("td:nth-child(3) > p > span > a").attr("href");
 
-        Note note = new Note();
-        note.setGetGoogleBookNote(noteBody);
-        note.setNoteUrl(noteUrl);
-        note.setGoogleBookId(file.getId());
-        note.setBook(book);
+          Note note = new Note();
+          note.setGetGoogleBookNote(noteBody);
+          note.setNoteUrl(noteUrl);
+          note.setGoogleBookId(file.getId());
+          note.setBook(book);
 
-        book.getNotes().add(note);
-      });
+          book.getNotes().add(note);
+        });
 
     entityManager.persist(book);
     entityManager.getTransaction().commit();
@@ -284,10 +287,8 @@ public class NoteServiceImpl implements NoteService {
 
   private String msToMinutes(long ms) {
     return String.format("%02d:%02d",
-      TimeUnit.MILLISECONDS.toMinutes(ms),
-      TimeUnit.MILLISECONDS.toSeconds(ms) -
-        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))
-    );
+        TimeUnit.MILLISECONDS.toMinutes(ms),
+        TimeUnit.MILLISECONDS.toSeconds(ms) -
+            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
   }
 }
-

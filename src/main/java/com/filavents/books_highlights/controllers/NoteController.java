@@ -7,6 +7,8 @@ import com.filavents.books_highlights.services.NoteService;
 import com.filavents.books_highlights.services.impl.NoteServiceImpl;
 import com.filavents.books_highlights.utils.GoogleApi;
 import com.filavents.books_highlights.utils.NotesIndexer;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.logging.Logger;
@@ -27,6 +29,7 @@ public class NoteController {
 
   private static final NoteService noteService = new NoteServiceImpl();
   static OkHttpClient client = new OkHttpClient();
+  static Dotenv dotenv = Dotenv.load();
 
   private NoteController() {
 
@@ -36,9 +39,9 @@ public class NoteController {
 
   public static void syncBookCovers(RoutingContext ctx) {
     ctx.response()
-      .setStatusCode(200)
-      .putHeader("content-type", "application/json")
-      .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
+        .setStatusCode(200)
+        .putHeader("content-type", "application/json")
+        .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
 
     Future.future(promise -> {
       boolean result = GoogleApi.syncBookCovers();
@@ -52,9 +55,9 @@ public class NoteController {
       try {
         if (GoogleApi.getCredentials() != null) {
           ctx.response()
-            .setStatusCode(200)
-            .putHeader("content-type", "application/json")
-            .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
+              .setStatusCode(200)
+              .putHeader("content-type", "application/json")
+              .end(Buffer.buffer(new JsonObject().put("success", true).encode()));
 
           Future.future(promise -> {
             boolean result = false;
@@ -68,37 +71,35 @@ public class NoteController {
           });
         } else {
           ctx.response()
-            .setStatusCode(200)
-            .putHeader("content-type", "application/json")
-            .end(
-              Buffer.buffer(
-                new JsonObject()
-                  .put("success", false)
-                  .put("redirect", true)
-                  .put("redirectUrl", GoogleApi.getAuthorizeUrl())
-                  .encode()
-              )
-            );
+              .setStatusCode(200)
+              .putHeader("content-type", "application/json")
+              .end(
+                  Buffer.buffer(
+                      new JsonObject()
+                          .put("success", false)
+                          .put("redirect", true)
+                          .put("redirectUrl", GoogleApi.getAuthorizeUrl())
+                          .encode()));
         }
       } catch (GeneralSecurityException | IOException e) {
         ctx.response()
-          .setStatusCode(550)
-          .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+            .setStatusCode(550)
+            .putHeader("content-type", "application/json")
+            .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
       }
     } else {
       ctx.response()
-        .setStatusCode(401)
-        .putHeader("content-type", "application/json")
-        .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+          .setStatusCode(401)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
     }
   }
 
   private static boolean verifyPinViaGoogleAuthenticator(RoutingContext ctx) {
     String pin = ctx.body().asJsonObject().getString("pin");
     Request request = new Request.Builder()
-      .url("https://www.authenticatorapi.com/Validate.aspx?Pin=" + pin + "&SecretCode=" + System.getenv("SECRETCODE"))
-      .build();
+        .url("https://www.authenticatorapi.com/Validate.aspx?Pin=" + pin + "&SecretCode=" + dotenv.get("SECRETCODE"))
+        .build();
 
     try (Response response = client.newCall(request).execute()) {
       return response.body().string().contains("True");
@@ -109,7 +110,7 @@ public class NoteController {
   }
 
   private static boolean verifyPin(RoutingContext ctx) {
-    String xPin = System.getenv("PIN");
+    String xPin = dotenv.get("PIN");
     String pin = ctx.body().asJsonObject().getString("pin");
     return pin != null && pin.equals(xPin);
   }
@@ -122,40 +123,36 @@ public class NoteController {
         if (GoogleApi.getCredentials() != null) {
           boolean result = noteService.syncNotesByBookId(ctx.pathParam("bookId"));
           ctx.response()
-            .setStatusCode(200)
-            .putHeader("content-type", "application/json")
-            .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
+              .setStatusCode(200)
+              .putHeader("content-type", "application/json")
+              .end(Buffer.buffer(new JsonObject().put("success", result).encode()));
         } else {
           ctx.response()
-            .setStatusCode(200)
-            .putHeader("content-type", "application/json")
-            .end(
-              Buffer.buffer(
-                new JsonObject()
-                  .put("success", false)
-                  .put("redirect", true)
-                  .put("redirectUrl", GoogleApi.getAuthorizeUrl())
-                  .encode()
-              )
-            );
+              .setStatusCode(200)
+              .putHeader("content-type", "application/json")
+              .end(
+                  Buffer.buffer(
+                      new JsonObject()
+                          .put("success", false)
+                          .put("redirect", true)
+                          .put("redirectUrl", GoogleApi.getAuthorizeUrl())
+                          .encode()));
         }
       } catch (GeneralSecurityException | IOException e) {
         logger.error(e.getMessage());
         ctx.response()
-          .setStatusCode(550)
-          .putHeader("content-type", "application/json")
-          .end(Buffer.buffer(
-              new JsonObject().put("success", false)
-                .put("message", e.getMessage())
-                .encode()
-            )
-          );
+            .setStatusCode(550)
+            .putHeader("content-type", "application/json")
+            .end(Buffer.buffer(
+                new JsonObject().put("success", false)
+                    .put("message", e.getMessage())
+                    .encode()));
       }
     } else {
       ctx.response()
-        .setStatusCode(401)
-        .putHeader("content-type", "application/json")
-        .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
+          .setStatusCode(401)
+          .putHeader("content-type", "application/json")
+          .end(Buffer.buffer(new JsonObject().put("success", false).encode()));
     }
   }
 
@@ -163,9 +160,9 @@ public class NoteController {
     String code = ctx.queryParams().get("code");
     GoogleApi.setCredentials(code);
     ctx.response()
-      .setStatusCode(302)
-      .putHeader("Location", "/")
-      .end();
+        .setStatusCode(302)
+        .putHeader("Location", "/")
+        .end();
 
   }
 

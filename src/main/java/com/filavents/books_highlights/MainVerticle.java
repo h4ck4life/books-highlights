@@ -2,6 +2,8 @@ package com.filavents.books_highlights;
 
 import com.filavents.books_highlights.configs.Database;
 import com.filavents.books_highlights.controllers.NoteController;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
@@ -20,11 +22,12 @@ public class MainVerticle {
   static Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
   public static void main(String[] args) {
+    Dotenv dotenv = Dotenv.load();
 
     // Init vertx
     VertxOptions vertxOptions = new VertxOptions()
-      .setMaxWorkerExecuteTime(10)
-      .setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
+        .setMaxWorkerExecuteTime(10)
+        .setMaxWorkerExecuteTimeUnit(TimeUnit.MINUTES);
     var vertx = Vertx.vertx(vertxOptions);
 
     // Init the EMF
@@ -40,13 +43,12 @@ public class MainVerticle {
 
     // enable CORS
     router.route().handler(
-      CorsHandler.create()
-        .allowedMethod(io.vertx.core.http.HttpMethod.GET)
-        .allowedMethod(io.vertx.core.http.HttpMethod.POST)
-        .addOrigin("*")
-        //.allowedHeader("pin")
-        .allowCredentials(true)
-    );
+        CorsHandler.create()
+            .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+            .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+            .addOrigin("*")
+            // .allowedHeader("pin")
+            .allowCredentials(true));
 
     // Request body handler
     router.route().handler(BodyHandler.create());
@@ -70,7 +72,7 @@ public class MainVerticle {
     router.route("/*").handler(StaticHandler.create().setWebRoot("web/playbooks/dist/playbooks"));
 
     // Start the server
-    int runningPort = Integer.parseInt(System.getenv("PORT"));
+    int runningPort = Integer.parseInt(dotenv.get("PORT"));
     server.requestHandler(router).listen(runningPort).andThen(httpServerAsyncResult -> {
       if (httpServerAsyncResult.succeeded()) {
         logger.info("Server started on port: " + runningPort);
