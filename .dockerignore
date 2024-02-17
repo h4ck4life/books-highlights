@@ -1,9 +1,11 @@
 .mvn/
 .idea/
 .vscode/
+.env
 index/
 target/
 tmp/
 tokens/
 README.adoc
 booknotes_full.sqlite
+web/playbooks/node_modules/

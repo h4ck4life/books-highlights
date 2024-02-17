@@ -12,7 +12,7 @@ To launch your tests:
 
 To package your application:
 ```
-./mvnw clean package
+./mvnw clean package -DskipTests
 ```
 
 To run your application:

@@ -15,11 +15,9 @@
     <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
 
-    <vertx.version>4.3.7</vertx.version>
+    <vertx.version>4.5.3</vertx.version>
     <junit-jupiter.version>5.9.0</junit-jupiter.version>
-
-    <main.verticle>com.filavents.books_highlights.MainVerticle</main.verticle>
-    <launcher.class>io.vertx.core.Launcher</launcher.class>
+    <mainClass>com.filavents.books_highlights.MainVerticle</mainClass>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.test.skip>true</maven.test.skip>
@@ -102,7 +100,7 @@
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.40.0.0</version>
+      <version>3.41.2.2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -159,6 +157,7 @@
       <artifactId>dotenv-java</artifactId>
       <version>3.0.0</version>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -182,6 +181,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>        <!-- Use the appropriate version -->
+        <configuration>
+          <mainClass>com.filavents.books_highlights.MainVerticle</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>
