@@ -21,6 +21,7 @@ public class MainVerticle {
 
   static Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
+  @SuppressWarnings("deprecation")
   public static void main(String[] args) {
     Dotenv dotenv = Dotenv.load();
 
@@ -37,7 +38,6 @@ public class MainVerticle {
     HttpServerOptions serverOptions = new HttpServerOptions();
     serverOptions.setCompressionSupported(true);
     HttpServer server = vertx.createHttpServer(serverOptions);
-
 
     // Init Router
     Router router = Router.router(vertx);
