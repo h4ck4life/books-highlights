@@ -107,7 +107,7 @@ public class NotesIndexer {
     Query query = parser.parse(queryString + "~1");
     TopDocs results = searcher.search(query, 30);
 
-    List<Map> searchResultsList = new ArrayList<>();
+    List<Map<String, String>> searchResultsList = new ArrayList<>();
     for (ScoreDoc scoreDoc : results.scoreDocs) {
       Document doc = searcher.doc(scoreDoc.doc);
 
@@ -123,10 +123,17 @@ public class NotesIndexer {
     return new JsonResponse(true, searchResultsList);
   }
 
-  private static List<Map> cleanDuplicateNoteText(List<Map> searchResultsList) {
-    List<Map> searchResultsListCleaned = new ArrayList<>();
-    for (Map searchResult : searchResultsList) {
-      if (!searchResultsListCleaned.contains(searchResult.get("noteText"))) {
+  private static List<Map<String, String>> cleanDuplicateNoteText(List<Map<String, String>> searchResultsList) {
+    List<Map<String, String>> searchResultsListCleaned = new ArrayList<>();
+    for (Map<String, String> searchResult : searchResultsList) {
+      boolean isDuplicate = false;
+      for (Map<String, String> cleanedResult : searchResultsListCleaned) {
+        if (cleanedResult.get("noteText").equals(searchResult.get("noteText"))) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (!isDuplicate) {
         searchResultsListCleaned.add(searchResult);
       }
     }

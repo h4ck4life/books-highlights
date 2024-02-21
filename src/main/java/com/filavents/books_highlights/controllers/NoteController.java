@@ -172,12 +172,12 @@ public class NoteController {
       JsonResponse searchResults = null;
       try {
         searchResults = NotesIndexer.search(query);
-      } catch (ParseException e) {
-        throw new RuntimeException(e);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
+      } catch (ParseException | IOException e) {
+        logger.error(e.getMessage());
+        promise.complete(new JsonResponse(false, List.of("error")).asMap());
       }
-      promise.complete(searchResults.asMap());
+        assert searchResults != null;
+        promise.complete(searchResults.asMap());
     });
   }
 

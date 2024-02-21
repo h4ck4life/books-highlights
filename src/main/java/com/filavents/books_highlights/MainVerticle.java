@@ -38,6 +38,7 @@ public class MainVerticle {
     serverOptions.setCompressionSupported(true);
     HttpServer server = vertx.createHttpServer(serverOptions);
 
+
     // Init Router
     Router router = Router.router(vertx);
 
